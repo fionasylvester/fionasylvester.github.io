@@ -1,0 +1,2167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiona Sylvester — Data Analyst</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06090f;
+    --surface: #0d1420;
+    --card: #111827;
+    --border: #1e2d45;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --highlight: #f59e0b;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    overflow-x: hidden;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 20px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(6,9,15,0.95), transparent);
+    backdrop-filter: blur(8px);
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Animated grid background */
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(60px); }
+  }
+
+  /* Floating data particles */
+  .particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .particle {
+    position: absolute;
+    font-size: 0.65rem;
+    color: rgba(0,212,255,0.15);
+    font-family: var(--font-mono);
+    animation: float linear infinite;
+    white-space: nowrap;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) translateX(30px); opacity: 0; }
+  }
+
+  /* Glow orbs */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .orb-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    animation: orbPulse 8s ease-in-out infinite;
+  }
+  .orb-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 70%);
+    bottom: 0; left: 100px;
+    animation: orbPulse 10s ease-in-out infinite reverse;
+  }
+  @keyframes orbPulse {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.15); opacity: 1; }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    color: var(--accent);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    animation: fadeSlideUp 0.8s ease forwards;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: blink 1.5s ease infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    animation: fadeSlideUp 0.8s ease 0.1s forwards;
+    opacity: 0;
+  }
+  .hero-name .line-1 { color: var(--text); display: block; }
+  .hero-name .line-2 {
+    display: block;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-title {
+    font-size: 0.85rem;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    animation: fadeSlideUp 0.8s ease 0.2s forwards;
+    opacity: 0;
+  }
+
+  .hero-summary {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.9;
+    color: #94a3b8;
+    max-width: 600px;
+    margin-bottom: 48px;
+    animation: fadeSlideUp 0.8s ease 0.3s forwards;
+    opacity: 0;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-bottom: 48px;
+    animation: fadeSlideUp 0.8s ease 0.4s forwards;
+    opacity: 0;
+  }
+  .stat { display: flex; flex-direction: column; gap: 4px; }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .stat-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeSlideUp 0.8s ease 0.5s forwards;
+    opacity: 0;
+  }
+  .btn {
+    padding: 12px 28px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border: 1px solid var(--accent);
+    font-weight: 700;
+  }
+  .btn-primary:hover {
+    background: transparent;
+    color: var(--accent);
+    box-shadow: 0 0 24px rgba(0,212,255,0.3);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Section styles */
+  section {
+    padding: 100px 48px;
+    position: relative;
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--accent);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .section-label::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 64px;
+    letter-spacing: 0em;
+  }
+
+  /* Skills section */
+  .skills-section { background: var(--surface); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px;
+    background: var(--border);
+  }
+
+  .skill-card {
+    background: var(--card);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .skill-card:hover::before { transform: scaleX(1); }
+  .skill-card:hover { background: #161f32; }
+
+  .skill-icon {
+    width: 40px; height: 40px;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+  }
+
+  .skill-name {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag {
+    background: rgba(0,212,255,0.06);
+    border: 1px solid rgba(0,212,255,0.15);
+    color: #7dd3fc;
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.08em;
+  }
+  .tag.purple {
+    background: rgba(124,58,237,0.08);
+    border-color: rgba(124,58,237,0.2);
+    color: #c4b5fd;
+  }
+  .tag.green {
+    background: rgba(16,185,129,0.08);
+    border-color: rgba(16,185,129,0.2);
+    color: #6ee7b7;
+  }
+  .tag.amber {
+    background: rgba(245,158,11,0.08);
+    border-color: rgba(245,158,11,0.2);
+    color: #fcd34d;
+  }
+
+  /* Experience timeline */
+  .experience-section {}
+
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 64px;
+    animation: none;
+    opacity: 1;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -36px;
+    top: 6px;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  .timeline-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .timeline-company {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .timeline-period {
+    font-size: 0.7rem;
+    color: var(--muted);
+    background: rgba(255,255,255,0.05);
+    padding: 4px 12px;
+    border-radius: 100px;
+    letter-spacing: 0.1em;
+  }
+
+  .timeline-role {
+    color: var(--accent);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .timeline-achievements {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .timeline-achievements li {
+    display: flex;
+    gap: 12px;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: #94a3b8;
+  }
+  .timeline-achievements li::before {
+    content: '▸';
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Achievements */
+  .achievements-section { background: var(--surface); }
+
+  .achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  .achievement-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .achievement-card:hover {
+    border-color: rgba(0,212,255,0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(0,212,255,0.05);
+  }
+  .achievement-num {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .achievement-text {
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: #94a3b8;
+  }
+  .achievement-glow {
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(0,212,255,0.06), transparent 70%);
+    border-radius: 50%;
+  }
+
+  /* Proof of Work — placeholder */
+  .proof-section {}
+
+  .proof-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .proof-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-style: italic;
+    max-width: 320px;
+    line-height: 1.6;
+  }
+
+  .proof-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  .proof-card {
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 48px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 220px;
+    background: rgba(255,255,255,0.01);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .proof-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,212,255,0.02), rgba(124,58,237,0.02));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .proof-card:hover::before { opacity: 1; }
+  .proof-card:hover {
+    border-color: rgba(0,212,255,0.25);
+    border-style: solid;
+  }
+
+  .proof-icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+    opacity: 0.4;
+  }
+  .proof-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .proof-desc {
+    font-size: 0.72rem;
+    color: #334155;
+    line-height: 1.6;
+    max-width: 240px;
+  }
+  .proof-badge {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.25);
+    color: var(--highlight);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+
+  /* Education */
+  .education-section { background: var(--surface); }
+  .edu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  .edu-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    transition: all 0.3s;
+  }
+  .edu-card:hover {
+    border-color: rgba(124,58,237,0.4);
+    transform: translateY(-3px);
+  }
+  .edu-degree {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .edu-school {
+    color: var(--accent2);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .edu-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .edu-score {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.2);
+    color: var(--accent3);
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+  }
+
+  /* Contact */
+  .contact-section {
+    background: var(--bg);
+    text-align: center;
+    padding: 120px 48px;
+  }
+  .contact-inner {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .contact-section .section-label {
+    justify-content: center;
+  }
+  .contact-section .section-label::before { display: none; }
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 48px;
+  }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    transition: all 0.2s;
+  }
+  .contact-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,212,255,0.1);
+  }
+
+  /* Data viz decoration - animated bar chart */
+  .viz-decoration {
+    position: absolute;
+    right: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 180px;
+    opacity: 0.12;
+    pointer-events: none;
+  }
+  .viz-bar {
+    width: 12px;
+    background: linear-gradient(to top, var(--accent), var(--accent2));
+    border-radius: 3px 3px 0 0;
+    animation: barGrow 3s ease infinite;
+  }
+  @keyframes barGrow {
+    0%, 100% { transform: scaleY(0.6); }
+    50% { transform: scaleY(1); }
+  }
+
+  /* Footer */
+  footer {
+    padding: 32px 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.7rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Terminal typing effect */
+  .typed::after {
+    content: '|';
+    animation: blink 0.8s step-end infinite;
+    color: var(--accent);
+  }
+
+  /* Location chip */
+  .location-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 16px;
+  }
+  .location-chip::before {
+    content: '📍';
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    section { padding: 80px 24px; }
+    .hero { padding: 100px 24px 60px; }
+    .hero-stats { gap: 32px; }
+    .viz-decoration { display: none; }
+    .nav-links { display: none; }
+    footer { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">FS_</a>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="grid-bg"></div>
+  <div class="particles" id="particles"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Available for opportunities</div>
+
+    <h1 class="hero-name">
+      <span class="line-1">Fiona</span>
+      <span class="line-2">Sylvester</span>
+    </h1>
+
+    <p class="hero-title">Data Analyst · Regulatory Reporting · Payment Risk Analytics</p>
+
+    <p class="hero-summary">
+      Turning raw transactional noise into signal. 6+ years navigating high-volume fintech data — from anomaly detection in critical banking systems to root cause analysis that prevented $400K+ in fraud losses. I speak fluent SQL, think in data lineage, and translate technical findings into decisions that matter.
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">6+</span>
+        <span class="stat-label">Years Experience</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">300+</span>
+        <span class="stat-label">Metrics Tracked</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">$400K</span>
+        <span class="stat-label">Fraud Prevented</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">2×</span>
+        <span class="stat-label">Query Performance</span>
+      </div>
+    </div>
+
+    <div class="hero-cta">
+      <a href="#experience" class="btn btn-primary">View Experience</a>
+      <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+    </div>
+
+    <div class="location-chip">Mumbai / Bengaluru, India</div>
+  </div>
+
+  <!-- Decorative bar chart -->
+  <div class="viz-decoration" aria-hidden="true">
+    <div class="viz-bar" style="height:45%;animation-delay:0s"></div>
+    <div class="viz-bar" style="height:80%;animation-delay:0.2s"></div>
+    <div class="viz-bar" style="height:60%;animation-delay:0.4s"></div>
+    <div class="viz-bar" style="height:95%;animation-delay:0.6s"></div>
+    <div class="viz-bar" style="height:50%;animation-delay:0.8s"></div>
+    <div class="viz-bar" style="height:75%;animation-delay:1s"></div>
+    <div class="viz-bar" style="height:40%;animation-delay:1.2s"></div>
+    <div class="viz-bar" style="height:88%;animation-delay:1.4s"></div>
+    <div class="viz-bar" style="height:65%;animation-delay:1.6s"></div>
+    <div class="viz-bar" style="height:30%;animation-delay:1.8s"></div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="skills-section" id="skills">
+  <div class="section-label">Technical Proficiency</div>
+  <h2 class="section-title reveal">Core Competencies</h2>
+
+  <div class="skills-grid reveal">
+    <div class="skill-card">
+      <div class="skill-icon">🗄️</div>
+      <div class="skill-name">Data & Databases</div>
+      <div class="skill-tags">
+        <span class="tag">SQL</span>
+        <span class="tag">ClickHouse</span>
+        <span class="tag">PostgreSQL</span>
+        <span class="tag">TimescaleDB</span>
+        <span class="tag">Stored Procedures</span>
+        <span class="tag">Materialized Views</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-icon">🔍</div>
+      <div class="skill-name">Analytics & Investigation</div>
+      <div class="skill-tags">
+        <span class="tag purple">Anomaly Detection</span>
+        <span class="tag purple">Root Cause Analysis</span>
+        <span class="tag purple">Data Lineage</span>
+        <span class="tag purple">Source-to-Target Mapping</span>
+        <span class="tag purple">Change Impact Analysis</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-icon">📊</div>
+      <div class="skill-name">BI & Visualization</div>
+      <div class="skill-tags">
+        <span class="tag green">Grafana</span>
+        <span class="tag green">Dashboard Design</span>
+        <span class="tag green">ELK Stack</span>
+        <span class="tag green">Kibana</span>
+        <span class="tag green">Data Storytelling</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-icon">⚙️</div>
+      <div class="skill-name">Engineering & Ops</div>
+      <div class="skill-tags">
+        <span class="tag amber">Apache Airflow</span>
+        <span class="tag amber">Kubernetes</span>
+        <span class="tag amber">Python</span>
+        <span class="tag amber">Data Pipelines</span>
+        <span class="tag amber">Schema Design</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-icon">🧠</div>
+      <div class="skill-name">AI / ML</div>
+      <div class="skill-tags">
+        <span class="tag">Machine Learning</span>
+        <span class="tag">Predictive Modeling</span>
+        <span class="tag">Statistical Analysis</span>
+        <span class="tag">M.Tech in AI & ML</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-icon">🤝</div>
+      <div class="skill-name">Business & Collaboration</div>
+      <div class="skill-tags">
+        <span class="tag purple">Stakeholder Mgmt</span>
+        <span class="tag purple">Cross-functional Teams</span>
+        <span class="tag purple">SLA-driven Environments</span>
+        <span class="tag purple">Tech-to-Business Translation</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">Career History</div>
+  <h2 class="section-title reveal">Professional Experience</h2>
+
+  <div class="timeline">
+
+    <div class="timeline-item reveal">
+      <div class="timeline-meta">
+        <span class="timeline-company">Vunet Systems Pvt Ltd</span>
+        <span class="timeline-period">Apr 2025 – Present</span>
+      </div>
+      <div class="timeline-role">Senior Data Scientist · Bengaluru, India</div>
+      <ul class="timeline-achievements">
+        <li>Built an Anomaly Detection module in ClickHouse deployed across leading Indian banks, tracking 300+ metrics across diverse KPIs in real-time payment systems.</li>
+        <li>Conduct root cause analysis on client-reported data anomalies — tracing data lineage through complex SQL queries to distinguish upstream quality failures from valid business events.</li>
+        <li>Maintain source-to-target data mapping documents ensuring accurate data flow across 300+ dimensions in production banking environments.</li>
+        <li>Designed modular metadata-driven dashboards that cut client-specific development time by 80% and enable faster change impact validation.</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item reveal">
+      <div class="timeline-meta">
+        <span class="timeline-company">Vunet Systems Pvt Ltd</span>
+        <span class="timeline-period">Jun 2023 – Mar 2025</span>
+      </div>
+      <div class="timeline-role">Data Scientist · Bengaluru, India</div>
+      <ul class="timeline-achievements">
+        <li>Led migration of the analytics stack from ELK to ClickHouse + Kubernetes + Grafana, achieving 2× query performance improvement with rigorous regression-free validation for downstream banking clients.</li>
+        <li>Designed and maintained analytical database schemas (fact-dimension models, partitions, rollups, materialized views) for low-latency queries over high-volume payment data.</li>
+        <li>Performed systematic source-vs-reporting comparisons to detect logic-level data quality issues even when schemas remained unchanged.</li>
+        <li>Bridged engineering and business stakeholders — translating technical data findings into actionable requirements for reporting consumers.</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item reveal">
+      <div class="timeline-meta">
+        <span class="timeline-company">Vunet Systems</span>
+        <span class="timeline-period">Aug 2022 – May 2023</span>
+      </div>
+      <div class="timeline-role">Data Science Intern</div>
+      <ul class="timeline-achievements">
+        <li>Built and scheduled PostgreSQL TSDB stored procedures via Apache Airflow to aggregate data from 10+ source tables into hourly, daily, and weekly rollups.</li>
+        <li>Validated data accuracy across 50K+ daily transactions and investigated discrepancies between source and aggregated tables to prevent false reporting.</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item reveal">
+      <div class="timeline-meta">
+        <span class="timeline-company">PayPal India Pvt Ltd</span>
+        <span class="timeline-period">Aug 2019 – Sep 2021</span>
+      </div>
+      <div class="timeline-role">Risk Operations Agent II – Fraud & Data Analysis · Bengaluru, India</div>
+      <ul class="timeline-achievements">
+        <li>Analyzed large transaction volumes using SQL to identify fraud patterns, build detection rules, and conduct root cause investigations on risk incidents.</li>
+        <li>Reduced repeat fraud by 15–20% and false positives by 22% through data-driven SQL rule design; prevented $400K+ in fraud losses.</li>
+        <li>Assessed blast radius of fraud rule changes across transaction segments and merchant categories using structured change impact analysis.</li>
+        <li>Recognized with PayPal Spot Award for high-impact triaging and cross-team collaboration between operations and technology.</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item reveal">
+      <div class="timeline-meta">
+        <span class="timeline-company">PayPal India Pvt Ltd</span>
+        <span class="timeline-period">Jan 2019 – Aug 2019</span>
+      </div>
+      <div class="timeline-role">Risk Operations Agent I · Bengaluru, India</div>
+      <ul class="timeline-achievements">
+        <li>Promoted to Agent II within just 6 months for consistently resolving 90+ daily high-risk alerts with 98%+ QA scores.</li>
+        <li>Demonstrated strong data investigation and issue management capabilities in a high-volume, SLA-driven financial services environment.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- KEY ACHIEVEMENTS -->
+<section class="achievements-section">
+  <div class="section-label">Impact</div>
+  <h2 class="section-title reveal">Key Achievements</h2>
+
+  <div class="achievements-grid">
+    <div class="achievement-card reveal">
+      <div class="achievement-glow"></div>
+      <div class="achievement-num">300+</div>
+      <div class="achievement-text">Metrics tracked in real-time anomaly detection system deployed across multiple Indian banking clients in critical payment reporting infrastructure.</div>
+    </div>
+    <div class="achievement-card reveal">
+      <div class="achievement-glow"></div>
+      <div class="achievement-num">22%</div>
+      <div class="achievement-text">Reduction in fraud-related false positives at PayPal through structured SQL-driven impact analysis and iterative rule refinement.</div>
+    </div>
+    <div class="achievement-card reveal">
+      <div class="achievement-glow"></div>
+      <div class="achievement-num">$400K+</div>
+      <div class="achievement-text">In fraud losses prevented through systematic transactional data investigation and proactive escalation of high-value suspicious activities.</div>
+    </div>
+    <div class="achievement-card reveal">
+      <div class="achievement-glow"></div>
+      <div class="achievement-num">2×</div>
+      <div class="achievement-text">Query performance improvement delivered via strategic data platform migration from ELK to ClickHouse, with zero downstream reporting regression.</div>
+    </div>
+    <div class="achievement-card reveal">
+      <div class="achievement-glow"></div>
+      <div class="achievement-num">80%</div>
+      <div class="achievement-text">Reduction in client onboarding time through reusable mapping-driven dashboard architecture — demonstrating scalable data design thinking.</div>
+    </div>
+    <div class="achievement-card reveal">
+      <div class="achievement-glow"></div>
+      <div class="achievement-num">8.8</div>
+      <div class="achievement-text">CGPA in M.Tech in AI & Machine Learning from Manipal Institute of Technology — strong quantitative foundation underpinning all analytical work.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF OF WORK (placeholder) -->
+<section id="work">
+  <div class="proof-header">
+    <div>
+      <div class="section-label">Portfolio</div>
+      <h2 class="section-title reveal" style="margin-bottom:0">Proof of Work</h2>
+    </div>
+    <p class="proof-note reveal">This section is reserved for case studies, dashboards, projects, and publications. Check back soon — work samples are on the way.</p>
+  </div>
+
+  <div class="proof-grid">
+    <div class="proof-card reveal" style="border-style:solid;border-color:rgba(239,68,68,0.25);cursor:pointer" onclick="openCaseStudy()">
+      <div class="proof-badge" style="background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.3);color:#34d399">Live ↗</div>
+      <div class="proof-icon" style="opacity:0.9">📈</div>
+      <div class="proof-title" style="color:var(--text)">Case Study: Fraud Detection</div>
+      <div class="proof-desc" style="color:#64748b">ATO, synthetic identity & fraudulent account creation in payment gateways — detection methodology, SQL patterns, and resolution playbooks.</div>
+    </div>
+    <div class="proof-card reveal" style="border-style:solid;border-color:rgba(0,212,255,0.25);cursor:pointer" onclick="openLineage()">
+      <div class="proof-badge" style="background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.3);color:#34d399">Live ↗</div>
+      <div class="proof-icon" style="opacity:0.9">🗺️</div>
+      <div class="proof-title" style="color:var(--text)">Data Lineage Map</div>
+      <div class="proof-desc" style="color:#64748b">Interactive source-to-target lineage across a real-time payment analytics pipeline — 6 layers, 12 source tables, 300+ KPI metrics.</div>
+    </div>
+    <div class="proof-card reveal">
+      <div class="proof-badge">Coming Soon</div>
+      <div class="proof-icon">🧪</div>
+      <div class="proof-title">Analytics Project</div>
+      <div class="proof-desc">End-to-end data analysis project — from raw data to insight, with code and commentary.</div>
+    </div>
+    <div class="proof-card reveal" style="border-style:solid;border-color:rgba(139,92,246,0.25);cursor:pointer" onclick="window.open('https://medium.com/@fiona.j.sylvester/wait-you-can-do-anomaly-detection-directly-inside-a-database-ba6ec8dceb8c','_blank')">
+      <div class="proof-badge" style="background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.3);color:#34d399">Live ↗</div>
+      <div class="proof-icon" style="opacity:0.9">📝</div>
+      <div class="proof-title" style="color:var(--text)">Medium: Anomaly Detection in ClickHouse</div>
+      <div class="proof-desc" style="color:#64748b">How to build real-time anomaly detection for payment pipelines entirely inside ClickHouse — STL decomposition, outlier masking, no ML framework required.</div>
+    </div>
+    <div class="proof-card reveal">
+      <div class="proof-badge">Coming Soon</div>
+      <div class="proof-icon">📊</div>
+      <div class="proof-title">Dashboard Showcase</div>
+      <div class="proof-desc">Screenshots and narrative of a Grafana or BI dashboard built for a real-world use case.</div>
+    </div>
+    <div class="proof-card reveal">
+      <div class="proof-badge">Coming Soon</div>
+      <div class="proof-icon">🔬</div>
+      <div class="proof-title">Research / Thesis</div>
+      <div class="proof-desc">Academic or independent research building on the M.Tech in AI & Machine Learning.</div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section class="education-section">
+  <div class="section-label">Academic Background</div>
+  <h2 class="section-title reveal">Education</h2>
+  <div class="edu-grid">
+    <div class="edu-card reveal">
+      <div class="edu-degree">M.Tech — Artificial Intelligence & Machine Learning</div>
+      <div class="edu-school">Manipal Institute of Technology</div>
+      <div class="edu-meta">
+        <span>Sept 2021 – May 2023</span>
+        <span class="edu-score">CGPA 8.8 / 10</span>
+      </div>
+    </div>
+    <div class="edu-card reveal">
+      <div class="edu-degree">B.Tech — Information Science</div>
+      <div class="edu-school">Oxford College of Engineering</div>
+      <div class="edu-meta">
+        <span>Aug 2014 – May 2018</span>
+        <span class="edu-score">74%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div class="section-label">Get in Touch</div>
+    <h2 class="section-title reveal" style="text-align:center">Let's Connect</h2>
+    <p class="hero-summary" style="text-align:center;margin:0 auto 0;">
+      Open to data analyst roles in regulatory reporting, fintech, or payment risk. Let's talk about how I can bring clarity to your data.
+    </p>
+    <div class="contact-links reveal">
+      <a class="contact-link" href="mailto:fiona.j.sylvester@gmail.com">
+        <span>✉</span> <span>fiona.j.sylvester@gmail.com</span>
+      </a>
+      <a class="contact-link" href="https://www.linkedin.com/in/fiona-sylvester-a24499156/" target="_blank">
+        <span>in</span> LinkedIn
+      </a>
+      <a class="contact-link" href="tel:+918095179762">
+        <span>📞</span> +91 8095 179762
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 Fiona Jothi Sylvester</span>
+  <span style="font-size:0.65rem;letter-spacing:0.15em">DATA ANALYST · REGULATORY REPORTING · PAYMENT RISK</span>
+  <span>Mumbai / Bengaluru, India</span>
+</footer>
+
+<!-- ═══════════════════ CASE STUDY OVERLAY ═══════════════════ -->
+<div id="caseStudyOverlay" style="display:none;position:fixed;inset:0;z-index:500;background:#0a0c10;overflow-y:auto;">
+<style>
+  #caseStudyOverlay { font-family:'Outfit',sans-serif; }
+  .cs-nav {
+    position:sticky;top:0;z-index:200;padding:16px 48px;
+    display:flex;justify-content:space-between;align-items:center;
+    background:rgba(10,12,16,0.95);backdrop-filter:blur(16px);
+    border-bottom:1px solid #1f2937;
+  }
+  .cs-back {
+    display:flex;align-items:center;gap:8px;color:#64748b;
+    font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;
+    font-family:'Space Mono',monospace;background:none;border:none;cursor:pointer;transition:color 0.2s;
+  }
+  .cs-back:hover { color:#ef4444; }
+  .cs-nav-meta { font-family:'Space Mono',monospace;font-size:0.65rem;color:#64748b;letter-spacing:0.1em; }
+  .cs-hero {
+    min-height:90vh;display:flex;flex-direction:column;justify-content:flex-end;
+    padding:80px 80px 72px;position:relative;overflow:hidden;
+  }
+  .cs-hero-bg {
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse 60% 50% at 80% 50%,rgba(239,68,68,0.06) 0%,transparent 70%),
+      radial-gradient(ellipse 40% 60% at 10% 80%,rgba(139,92,246,0.04) 0%,transparent 70%);
+  }
+  .cs-hero-grid {
+    position:absolute;inset:0;
+    background-image:linear-gradient(rgba(239,68,68,0.03) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(239,68,68,0.03) 1px,transparent 1px);
+    background-size:48px 48px;
+  }
+  .cs-label {
+    font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;
+    text-transform:uppercase;color:#ef4444;margin-bottom:24px;
+    display:flex;align-items:center;gap:12px;position:relative;
+  }
+  .cs-label::before{content:'';width:32px;height:1px;background:#ef4444;}
+  .cs-h1 {
+    font-family:'DM Serif Display',Georgia,serif;font-size:clamp(2.8rem,6vw,5.5rem);
+    line-height:1.0;letter-spacing:-0.02em;margin-bottom:28px;position:relative;color:#f1f5f9;
+  }
+  .cs-h1 em{font-style:italic;color:#ef4444;}
+  .cs-deck{font-size:1rem;color:#94a3b8;max-width:640px;line-height:1.75;margin-bottom:40px;font-weight:300;position:relative;}
+  .cs-chips{display:flex;gap:10px;flex-wrap:wrap;position:relative;margin-bottom:40px;}
+  .cs-chip{padding:5px 14px;border-radius:100px;font-size:0.7rem;letter-spacing:0.08em;font-family:'Space Mono',monospace;border:1px solid;}
+  .cs-chip-r{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.25);color:#fca5a5;}
+  .cs-chip-a{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.25);color:#fcd34d;}
+  .cs-chip-b{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.25);color:#93c5fd;}
+  .cs-chip-p{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.25);color:#c4b5fd;}
+  .cs-chip-g{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.25);color:#6ee7b7;}
+  .cs-hero-stats{display:flex;gap:40px;position:relative;padding-top:28px;border-top:1px solid #1f2937;flex-wrap:wrap;}
+  .cs-hstat-n{font-family:'DM Serif Display',serif;font-size:2rem;color:#ef4444;line-height:1;}
+  .cs-hstat-l{font-size:0.68rem;color:#64748b;text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
+  .cs-section{padding:72px 80px;max-width:960px;margin:0 auto;}
+  .cs-section-dark{background:#0f1318;}
+  .cs-section-darker{background:#080a0d;}
+  .cs-eyebrow{font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#ef4444;margin-bottom:12px;display:flex;align-items:center;gap:12px;}
+  .cs-eyebrow::before{content:'';width:24px;height:1px;background:#ef4444;}
+  .cs-h2{font-family:'DM Serif Display',serif;font-size:clamp(1.7rem,3vw,2.5rem);line-height:1.15;margin-bottom:20px;letter-spacing:-0.01em;color:#f1f5f9;}
+  .cs-h2 em{font-style:italic;color:#ef4444;}
+  .cs-lead{font-size:1rem;color:#94a3b8;line-height:1.8;max-width:720px;font-weight:300;margin-bottom:40px;}
+  .cs-h3{font-family:'DM Serif Display',serif;font-size:1.4rem;margin:36px 0 14px;color:#f1f5f9;}
+  .cs-p{color:#94a3b8;line-height:1.8;margin-bottom:18px;font-weight:300;}
+  .cs-p strong{color:#f1f5f9;font-weight:600;}
+  .cs-toc{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#1f2937;margin-bottom:0;}
+  .cs-toc-item{background:#141920;padding:18px 22px;display:flex;align-items:center;gap:14px;color:#94a3b8;font-size:0.83rem;transition:all 0.2s;border-left:2px solid transparent;cursor:pointer;text-decoration:none;}
+  .cs-toc-item:hover{background:#1a2130;border-left-color:#ef4444;color:#f1f5f9;}
+  .cs-toc-n{font-family:'Space Mono',monospace;color:#ef4444;font-size:0.68rem;flex-shrink:0;}
+  .cs-callout{padding:22px 26px;border-radius:10px;margin:28px 0;border-left:3px solid;}
+  .cs-callout-r{background:rgba(239,68,68,0.08);border-color:#ef4444;}
+  .cs-callout-a{background:rgba(245,158,11,0.08);border-color:#f59e0b;}
+  .cs-callout-g{background:rgba(16,185,129,0.08);border-color:#10b981;}
+  .cs-callout-b{background:rgba(59,130,246,0.08);border-color:#3b82f6;}
+  .cs-callout-lbl{font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;font-weight:500;}
+  .cs-callout-r .cs-callout-lbl{color:#ef4444;}
+  .cs-callout-a .cs-callout-lbl{color:#f59e0b;}
+  .cs-callout-g .cs-callout-lbl{color:#10b981;}
+  .cs-callout-b .cs-callout-lbl{color:#3b82f6;}
+  .cs-code{background:#080b10;border:1px solid #263041;border-radius:10px;padding:22px;margin:20px 0;font-family:'Space Mono',monospace;font-size:0.72rem;line-height:1.8;color:#7dd3fc;overflow-x:auto;position:relative;white-space:pre;}
+  .cs-code-lbl{position:absolute;top:10px;right:14px;font-size:0.58rem;color:#475569;letter-spacing:0.1em;text-transform:uppercase;}
+  .cs-kw{color:#c084fc;}.cs-fn{color:#34d399;}.cs-str{color:#fbbf24;}.cs-cm{color:#475569;font-style:italic;}.cs-num{color:#fb923c;}
+  .cs-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:28px 0;}
+  .cs-mcard{background:#141920;border:1px solid #1f2937;border-radius:10px;padding:20px;transition:all 0.25s;}
+  .cs-mcard:hover{border-color:rgba(239,68,68,0.3);transform:translateY(-2px);}
+  .cs-mval{font-family:'DM Serif Display',serif;font-size:1.8rem;line-height:1;margin-bottom:6px;}
+  .cs-mlbl{font-size:0.68rem;color:#64748b;text-transform:uppercase;letter-spacing:0.1em;}
+  .cs-mdelta{font-size:0.72rem;margin-top:6px;font-family:'Space Mono',monospace;}
+  .cs-dp{color:#ef4444;}.cs-dn{color:#10b981;}
+  .cs-flow{margin:36px 0;}
+  .cs-flow-steps{display:flex;gap:0;position:relative;}
+  .cs-flow-steps::before{content:'';position:absolute;top:26px;left:26px;right:26px;height:2px;background:linear-gradient(90deg,#ef4444,#f59e0b,#8b5cf6);z-index:0;}
+  .cs-fstep{flex:1;display:flex;flex-direction:column;align-items:center;gap:10px;position:relative;z-index:1;}
+  .cs-fnum{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:0.85rem;border:2px solid;flex-shrink:0;}
+  .cs-flab{font-size:0.68rem;text-align:center;color:#94a3b8;font-weight:500;max-width:84px;line-height:1.4;}
+  .cs-fsub{font-size:0.6rem;color:#64748b;text-align:center;max-width:84px;line-height:1.4;}
+  .cs-sig-table{width:100%;border-collapse:collapse;margin:20px 0;}
+  .cs-sig-table th{font-family:'Space Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:#64748b;padding:10px 14px;border-bottom:1px solid #1f2937;text-align:left;font-weight:400;}
+  .cs-sig-table td{padding:12px 14px;border-bottom:1px solid #1f2937;font-size:0.82rem;color:#94a3b8;vertical-align:top;}
+  .cs-sig-table tr:hover td{background:rgba(255,255,255,0.02);}
+  .cs-sig-table td:first-child{color:#f1f5f9;font-weight:500;}
+  .cs-rbadge{display:inline-block;padding:2px 9px;border-radius:100px;font-size:0.6rem;font-family:'Space Mono',monospace;letter-spacing:0.08em;border:1px solid;}
+  .cs-rc{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.25);color:#fca5a5;}
+  .cs-rh{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#fcd34d;}
+  .cs-rm{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.3);color:#93c5fd;}
+  .cs-dgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#1f2937;margin:28px 0;}
+  .cs-dcell{background:#141920;padding:24px;}
+  .cs-dctitle{font-size:0.82rem;font-weight:600;color:#f1f5f9;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+  .cs-dicon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;}
+  .cs-bar-chart{margin:28px 0;}
+  .cs-bar-row{display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+  .cs-bar-lbl{font-size:0.75rem;color:#94a3b8;width:190px;flex-shrink:0;}
+  .cs-bar-track{flex:1;height:7px;background:#1f2937;border-radius:4px;overflow:hidden;}
+  .cs-bar-fill{height:100%;border-radius:4px;animation:csBarGrow 1.2s cubic-bezier(0.16,1,0.3,1) forwards;}
+  @keyframes csBarGrow{from{width:0 !important;}}
+  .cs-bar-val{font-family:'Space Mono',monospace;font-size:0.68rem;color:#64748b;width:40px;text-align:right;}
+  .cs-timeline{position:relative;padding-left:26px;margin:28px 0;}
+  .cs-timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,#ef4444,#8b5cf6,transparent);}
+  .cs-atl-item{position:relative;margin-bottom:24px;}
+  .cs-atl-item::before{content:'';position:absolute;left:-31px;top:6px;width:9px;height:9px;border-radius:50%;background:#ef4444;box-shadow:0 0 8px #ef4444;}
+  .cs-atl-time{font-family:'Space Mono',monospace;font-size:0.62rem;color:#ef4444;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;}
+  .cs-atl-event{font-weight:600;color:#f1f5f9;margin-bottom:3px;font-size:0.88rem;}
+  .cs-atl-detail{font-size:0.8rem;color:#94a3b8;}
+  .cs-pull{border-left:3px solid #ef4444;padding:20px 28px;margin:40px 0;background:linear-gradient(135deg,rgba(239,68,68,0.06),transparent);border-radius:0 10px 10px 0;}
+  .cs-pull p{font-family:'DM Serif Display',serif;font-size:1.3rem;font-style:italic;color:#f1f5f9;line-height:1.5;margin-bottom:10px;}
+  .cs-pull cite{font-size:0.72rem;color:#64748b;font-family:'Space Mono',monospace;letter-spacing:0.1em;}
+  .cs-res-steps{counter-reset:csstep;margin:28px 0;}
+  .cs-res-step{display:flex;gap:18px;margin-bottom:24px;counter-increment:csstep;}
+  .cs-res-num{width:34px;height:34px;border-radius:50%;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#fca5a5;font-family:'Space Mono',monospace;font-size:0.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .cs-res-num::before{content:counter(csstep,decimal-leading-zero);}
+  .cs-res-body{flex:1;}
+  .cs-res-title{font-weight:600;color:#f1f5f9;margin-bottom:5px;font-size:0.92rem;}
+  .cs-res-desc{font-size:0.82rem;color:#94a3b8;line-height:1.7;}
+  .cs-rule-card{background:#141920;border:1px solid #1f2937;border-radius:10px;padding:22px;margin:18px 0;border-left:3px solid #f59e0b;}
+  .cs-rule-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:14px;flex-wrap:wrap;}
+  .cs-rule-name{font-weight:600;color:#f1f5f9;font-size:0.92rem;}
+  .cs-rule-desc{font-size:0.8rem;color:#94a3b8;line-height:1.7;margin-bottom:10px;}
+  .cs-results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:#1f2937;margin:28px 0;}
+  .cs-res-cell{background:#141920;padding:28px 20px;text-align:center;}
+  .cs-res-num2{font-family:'DM Serif Display',serif;font-size:2.5rem;line-height:1;margin-bottom:6px;display:block;}
+  .cs-res-lbl{font-size:0.68rem;color:#64748b;text-transform:uppercase;letter-spacing:0.1em;}
+  .cs-res-sub{font-size:0.75rem;color:#94a3b8;margin-top:6px;}
+  .cs-footer{padding:40px 48px;border-top:1px solid #1f2937;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;}
+  .cs-fn-name{font-family:'DM Serif Display',serif;font-size:1.1rem;color:#f1f5f9;}
+  .cs-fn-role{font-size:0.68rem;color:#64748b;letter-spacing:0.1em;text-transform:uppercase;font-family:'Space Mono',monospace;margin-top:4px;}
+  @media(max-width:768px){
+    .cs-hero,.cs-section{padding-left:24px;padding-right:24px;}
+    .cs-flow-steps::before{display:none;}
+    .cs-flow-steps{flex-wrap:wrap;gap:20px;}
+    .cs-dgrid,.cs-results-grid{grid-template-columns:1fr;}
+    .cs-toc{grid-template-columns:1fr;}
+    .cs-nav{padding:14px 20px;}
+  }
+</style>
+
+<!-- Nav -->
+<div class="cs-nav">
+  <button class="cs-back" onclick="closeCaseStudy()">← Portfolio</button>
+  <div class="cs-nav-meta">Case Study · Fraud Detection · Payment Gateways</div>
+</div>
+
+<!-- Hero -->
+<div class="cs-hero">
+  <div class="cs-hero-bg"></div>
+  <div class="cs-hero-grid"></div>
+  <div class="cs-label">Case Study — Fraud Detection</div>
+  <h1 class="cs-h1">When Good Accounts<br>Go <em>Bad:</em><br>Fraud in the<br>Payment Stack</h1>
+  <p class="cs-deck">A deep technical analysis of Account Takeover (ATO) and Fraudulent Account Creation in payment gateways — how these attacks are structured, how data analytics surfaces them, and how risk operations teams shut them down.</p>
+  <div class="cs-chips">
+    <span class="cs-chip cs-chip-r">Account Takeover (ATO)</span>
+    <span class="cs-chip cs-chip-a">Synthetic Identity Fraud</span>
+    <span class="cs-chip cs-chip-p">Fraudulent Account Creation</span>
+    <span class="cs-chip cs-chip-b">SQL Detection Patterns</span>
+    <span class="cs-chip cs-chip-g">Risk Rule Design</span>
+  </div>
+  <div class="cs-hero-stats">
+    <div><div class="cs-hstat-n">$485B</div><div class="cs-hstat-l">Global payment fraud losses (2023)</div></div>
+    <div><div class="cs-hstat-n">22%</div><div class="cs-hstat-l">False positive reduction achieved</div></div>
+    <div><div class="cs-hstat-n">$400K+</div><div class="cs-hstat-l">Fraud losses prevented</div></div>
+    <div><div class="cs-hstat-n">15–20%</div><div class="cs-hstat-l">Repeat fraud reduction</div></div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div style="background:#0f1318;padding:56px 80px;">
+  <div style="max-width:960px;margin:0 auto;">
+    <div class="cs-eyebrow">Contents</div>
+    <div class="cs-toc">
+      <a href="#cs-context" class="cs-toc-item"><span class="cs-toc-n">01</span> The Fraud Landscape</a>
+      <a href="#cs-ato" class="cs-toc-item"><span class="cs-toc-n">02</span> Account Takeover (ATO)</a>
+      <a href="#cs-fac" class="cs-toc-item"><span class="cs-toc-n">03</span> Fraudulent Account Creation</a>
+      <a href="#cs-detection" class="cs-toc-item"><span class="cs-toc-n">04</span> Detection Methodology</a>
+      <a href="#cs-signals" class="cs-toc-item"><span class="cs-toc-n">05</span> Behavioral Signal Analysis</a>
+      <a href="#cs-rules" class="cs-toc-item"><span class="cs-toc-n">06</span> Rule Design &amp; SQL Patterns</a>
+      <a href="#cs-resolution" class="cs-toc-item"><span class="cs-toc-n">07</span> Containment &amp; Resolution</a>
+      <a href="#cs-results" class="cs-toc-item"><span class="cs-toc-n">08</span> Outcomes &amp; Impact</a>
+    </div>
+  </div>
+</div>
+
+<!-- 01 CONTEXT -->
+<div id="cs-context" style="padding:72px 80px;">
+<div style="max-width:960px;margin:0 auto;">
+  <div class="cs-eyebrow">01 — The Fraud Landscape</div>
+  <h2 class="cs-h2">Payment gateways are <em>high-value targets.</em></h2>
+  <p class="cs-lead">A payment gateway sits at the intersection of identity, money, and velocity — exactly what fraudsters need. Understanding the attack surface is the first step to defending it.</p>
+  <p class="cs-p">Payment gateways like PayPal, Razorpay, and Stripe process millions of transactions daily across diverse merchant categories, user profiles, and geographies. This scale creates both the value and the vulnerability: a successful fraud operation doesn't target individuals — it targets <strong>patterns in the system that haven't yet been modeled as risks.</strong></p>
+  <p class="cs-p">Two attack vectors dominate the fraud landscape at the account level:</p>
+  <div class="cs-metrics">
+    <div class="cs-mcard"><div class="cs-mval" style="color:#ef4444">ATO</div><div class="cs-mlbl">Account Takeover</div><div class="cs-mdelta cs-dp">Compromised legitimate accounts</div></div>
+    <div class="cs-mcard"><div class="cs-mval" style="color:#f59e0b">FAC</div><div class="cs-mlbl">Fraudulent Account Creation</div><div class="cs-mdelta cs-dp">Synthetic / stolen identities</div></div>
+    <div class="cs-mcard"><div class="cs-mval" style="color:#8b5cf6">MF</div><div class="cs-mlbl">Mule Fraud</div><div class="cs-mdelta cs-dp">Money laundering via accounts</div></div>
+    <div class="cs-mcard"><div class="cs-mval" style="color:#3b82f6">CNP</div><div class="cs-mlbl">Card Not Present</div><div class="cs-mdelta cs-dp">Stolen card data at checkout</div></div>
+  </div>
+  <p class="cs-p">This case study focuses on <strong>ATO and FAC</strong> — the two vectors most directly related to account-level risk analysis, where transaction data analytics plays the most critical role. Both types of fraud leave <strong>data signatures</strong> — deviations from established behavioral baselines — that can be surfaced through careful SQL analysis, feature engineering, and rule design.</p>
+  <div class="cs-callout cs-callout-r">
+    <div class="cs-callout-lbl">⚠ Core Challenge</div>
+    <p class="cs-p" style="margin:0">The hardest problem in payment fraud is not detection accuracy — it's <strong>precision</strong>. Every false positive locks out a legitimate customer. At scale, even a 1% false positive rate across 50K daily transactions means 500 real customers incorrectly blocked per day. The goal is <em>surgical</em> detection: maximum fraud catch rate with minimum collateral damage.</p>
+  </div>
+</div></div>
+
+<!-- 02 ATO -->
+<div id="cs-ato" style="padding:72px 80px;background:#0f1318;">
+<div style="max-width:960px;margin:0 auto;">
+  <div class="cs-eyebrow">02 — Account Takeover</div>
+  <h2 class="cs-h2">The attacker doesn't need to <em>create</em> an account. They need to <em>steal</em> one.</h2>
+  <p class="cs-lead">ATO is the most economically efficient form of payment fraud. Legitimate accounts have established trust, payment methods on file, and cleared KYC — attackers inherit all of it.</p>
+  <h3 class="cs-h3">How ATO Attacks Are Structured</h3>
+  <p class="cs-p">ATO is rarely a single-step crime. It follows a predictable kill-chain, and each step produces detectable data signals:</p>
+  <div class="cs-flow">
+    <div class="cs-flow-steps">
+      <div class="cs-fstep"><div class="cs-fnum" style="background:rgba(239,68,68,0.15);border-color:#ef4444;color:#fca5a5">01</div><div class="cs-flab">Credential Acquisition</div><div class="cs-fsub">Phishing, breach, dark web</div></div>
+      <div class="cs-fstep"><div class="cs-fnum" style="background:rgba(245,158,11,0.12);border-color:#f59e0b;color:#fcd34d">02</div><div class="cs-flab">Credential Stuffing</div><div class="cs-fsub">Automated login attempts</div></div>
+      <div class="cs-fstep"><div class="cs-fnum" style="background:rgba(139,92,246,0.12);border-color:#8b5cf6;color:#c4b5fd">03</div><div class="cs-flab">Account Validation</div><div class="cs-fsub">Check balance, verify cards</div></div>
+      <div class="cs-fstep"><div class="cs-fnum" style="background:rgba(59,130,246,0.12);border-color:#3b82f6;color:#93c5fd">04</div><div class="cs-flab">Recon & Warmup</div><div class="cs-fsub">Small txns to avoid triggers</div></div>
+      <div class="cs-fstep"><div class="cs-fnum" style="background:rgba(239,68,68,0.2);border-color:#ef4444;color:#fca5a5">05</div><div class="cs-flab">Cashout</div><div class="cs-fsub">High-value transfer to mule</div></div>
+    </div>
+  </div>
+  <h3 class="cs-h3">The ATO Data Timeline</h3>
+  <p class="cs-p">When an account is taken over, the transaction data tells the story — if you know what to look for:</p>
+  <div class="cs-timeline">
+    <div class="cs-atl-item"><div class="cs-atl-time">T − 48 hrs</div><div class="cs-atl-event">Abnormal Login Geography</div><div class="cs-atl-detail">Login attempt from IP in a different country/city than the account's 90-day login history. Device fingerprint is new. User-agent string matches a known credential-stuffing bot framework.</div></div>
+    <div class="cs-atl-item"><div class="cs-atl-time">T − 24 hrs</div><div class="cs-atl-event">Account Enumeration Pattern</div><div class="cs-atl-detail">Multiple failed login attempts from the same IP subnet across different accounts — a classic credential stuffing pattern. Eventually one succeeds.</div></div>
+    <div class="cs-atl-item"><div class="cs-atl-time">T − 6 hrs</div><div class="cs-atl-event">Profile Modification</div><div class="cs-atl-detail">Password changed. Recovery email/phone updated. These changes suppress victim notifications and extend the attacker's access window.</div></div>
+    <div class="cs-atl-item"><div class="cs-atl-time">T − 1 hr</div><div class="cs-atl-event">Recon Transactions</div><div class="cs-atl-detail">Small payments (₹1–₹50) to low-risk merchants. The attacker is "testing" that the account and linked instruments are live and unblocked.</div></div>
+    <div class="cs-atl-item"><div class="cs-atl-time">T = 0</div><div class="cs-atl-event">Cashout Event</div><div class="cs-atl-detail">Single large transaction to a newly registered payee — often a high-risk merchant category (gift cards, crypto, money transfer). Amount typically just below the manual review threshold.</div></div>
+    <div class="cs-atl-item"><div class="cs-atl-time">T + 2 hrs</div><div class="cs-atl-event">Victim Discovery</div><div class="cs-atl-detail">The legitimate account holder logs in from their known device, sees the transactions, and raises a dispute. By this point, funds are often already moved.</div></div>
+  </div>
+  <div class="cs-pull">
+    <p>"The attacker's greatest advantage is time. Every hour between takeover and detection is money in transit. The analyst's job is to collapse that window to minutes."</p>
+    <cite>— Risk Operations Playbook</cite>
+  </div>
+  <h3 class="cs-h3">Key ATO Behavioral Signals</h3>
+  <table class="cs-sig-table">
+    <thead><tr><th>Signal</th><th>Description</th><th>Risk Weight</th><th>Data Source</th></tr></thead>
+    <tbody>
+      <tr><td>New device fingerprint</td><td>Login from device not seen in 90-day history</td><td><span class="cs-rbadge cs-rc">Critical</span></td><td>login_events</td></tr>
+      <tr><td>Geo velocity anomaly</td><td>Login from location &gt;500km from prior session within 4 hrs</td><td><span class="cs-rbadge cs-rc">Critical</span></td><td>session_log</td></tr>
+      <tr><td>Profile change + transaction</td><td>Password/email changed within 6 hrs of high-value txn</td><td><span class="cs-rbadge cs-rc">Critical</span></td><td>audit_log, transactions</td></tr>
+      <tr><td>New payee + high amount</td><td>First-ever transfer to payee, amount &gt;10× avg txn</td><td><span class="cs-rbadge cs-rc">Critical</span></td><td>payee_registry, transactions</td></tr>
+      <tr><td>Velocity spike</td><td>&gt;3 transactions in 10 minutes on dormant account</td><td><span class="cs-rbadge cs-rh">High</span></td><td>transactions</td></tr>
+      <tr><td>Recon micro-payments</td><td>2+ payments under ₹50 in the hour before large txn</td><td><span class="cs-rbadge cs-rh">High</span></td><td>transactions</td></tr>
+      <tr><td>High-risk MCC cashout</td><td>Payment to gift card / crypto / money transfer MCC</td><td><span class="cs-rbadge cs-rh">High</span></td><td>transactions, merchant_master</td></tr>
+      <tr><td>Dormancy break</td><td>Account inactive &gt;30 days suddenly transacts at high value</td><td><span class="cs-rbadge cs-rm">Medium</span></td><td>account_activity</td></tr>
+    </tbody>
+  </table>
+</div></div>
+
+<!-- 03 FAC -->
+<div id="cs-fac" style="padding:72px 80px;">
+<div style="max-width:960px;margin:0 auto;">
+  <div class="cs-eyebrow">03 — Fraudulent Account Creation</div>
+  <h2 class="cs-h2">Building fraud from <em>scratch:</em> synthetic identity and account farms.</h2>
+  <p class="cs-lead">FAC doesn't rely on stealing an existing account — it manufactures a new one. The challenge is that these accounts look real at creation, and only reveal their fraudulent nature over time.</p>
+  <h3 class="cs-h3">Types of Fraudulent Account Creation</h3>
+  <div class="cs-dgrid">
+    <div class="cs-dcell"><div class="cs-dctitle"><div class="cs-dicon" style="background:rgba(239,68,68,0.15)">🧬</div>Synthetic Identity Fraud</div><p class="cs-p" style="font-size:0.82rem">A synthetic identity combines real data elements (a valid PAN or Aadhaar number, often belonging to a minor or low-activity individual) with fabricated data. The resulting "person" passes basic KYC checks but doesn't exist. These accounts are carefully nurtured with small legitimate transactions over months before a final high-value cashout ("bust-out").</p></div>
+    <div class="cs-dcell"><div class="cs-dctitle"><div class="cs-dicon" style="background:rgba(245,158,11,0.12)">🤖</div>Bot-Farmed Accounts</div><p class="cs-p" style="font-size:0.82rem">Automated scripts create hundreds of accounts simultaneously, each using a unique email, device-spoofed fingerprints, and VPN-rotated IPs. Used immediately for referral abuse, bonus farming, or as mule nodes in money laundering networks. Registration velocity and email domain clustering are the primary detection signals.</p></div>
+    <div class="cs-dcell"><div class="cs-dctitle"><div class="cs-dicon" style="background:rgba(139,92,246,0.12)">🪪</div>Stolen Identity Accounts</div><p class="cs-p" style="font-size:0.82rem">Real PII obtained from data breaches is used to create accounts that pass full KYC verification. Unlike synthetic identities, these accounts have a real victim whose credit or financial standing may be damaged. Detection relies on behavioral biometrics, device analysis, and cross-referencing with known breach datasets.</p></div>
+    <div class="cs-dcell"><div class="cs-dctitle"><div class="cs-dicon" style="background:rgba(59,130,246,0.12)">💼</div>Money Mule Accounts</div><p class="cs-p" style="font-size:0.82rem">Recruited (often unknowing) individuals open real accounts and receive/forward funds. These pass KYC because they're real people. Detection requires network analysis — flagging accounts that consistently receive funds from flagged sources and immediately forward them, forming a "layering" pattern.</p></div>
+  </div>
+  <h3 class="cs-h3">The FAC Registration Fingerprint</h3>
+  <p class="cs-p">Fraudulent account creation attacks often happen in waves. When analyzed at the cohort level, clear patterns emerge:</p>
+  <div class="cs-bar-chart">
+    <div class="cs-bar-row"><div class="cs-bar-lbl">Email domain clustering</div><div class="cs-bar-track"><div class="cs-bar-fill" style="width:91%;background:linear-gradient(90deg,#ef4444,#f87171)"></div></div><div class="cs-bar-val">91%</div></div>
+    <div class="cs-bar-row"><div class="cs-bar-lbl">Registration IP subnet overlap</div><div class="cs-bar-track"><div class="cs-bar-fill" style="width:84%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div><div class="cs-bar-val">84%</div></div>
+    <div class="cs-bar-row"><div class="cs-bar-lbl">Device fingerprint similarity</div><div class="cs-bar-track"><div class="cs-bar-fill" style="width:78%;background:linear-gradient(90deg,#8b5cf6,#a78bfa)"></div></div><div class="cs-bar-val">78%</div></div>
+    <div class="cs-bar-row"><div class="cs-bar-lbl">Sequential registration timing</div><div class="cs-bar-track"><div class="cs-bar-fill" style="width:73%;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div></div><div class="cs-bar-val">73%</div></div>
+    <div class="cs-bar-row"><div class="cs-bar-lbl">Referral code reuse patterns</div><div class="cs-bar-track"><div class="cs-bar-fill" style="width:65%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div><div class="cs-bar-val">65%</div></div>
+    <div class="cs-bar-row"><div class="cs-bar-lbl">Name/address format anomalies</div><div class="cs-bar-track"><div class="cs-bar-fill" style="width:52%;background:linear-gradient(90deg,#64748b,#94a3b8)"></div></div><div class="cs-bar-val">52%</div></div>
+  </div>
+  <div class="cs-callout cs-callout-a">
+    <div class="cs-callout-lbl">🔍 Key Insight — The Bust-Out Pattern</div>
+    <p class="cs-p" style="margin:0">Synthetic identity accounts follow a "credit building" arc before defrauding the platform. They make small, legitimate transactions for 30–90 days, build transaction history, and then execute a single large fraudulent cashout. The <strong>sudden spike in transaction value relative to historical average</strong> is the most reliable detection signal, but it arrives late. Earlier detection requires registration-time signals and network graph analysis.</p>
+  </div>
+</div></div>
+
+<!-- 04 DETECTION -->
+<div id="cs-detection" style="padding:72px 80px;background:#0f1318;">
+<div style="max-width:960px;margin:0 auto;">
+  <div class="cs-eyebrow">04 — Detection Methodology</div>
+  <h2 class="cs-h2">A layered defense: from <em>real-time rules</em> to statistical models.</h2>
+  <p class="cs-lead">No single detection method catches all fraud. Effective fraud detection stacks multiple approaches, each optimized for different fraud types and time horizons.</p>
+  <div class="cs-dgrid">
+    <div class="cs-dcell" style="border-left:3px solid #ef4444"><div class="cs-dctitle"><div class="cs-dicon" style="background:rgba(239,68,68,0.12)">⚡</div>Layer 1: Real-time Rules</div><p class="cs-p" style="font-size:0.82rem"><strong>Latency: &lt;100ms.</strong> Hard-coded business logic that fires synchronously during transaction authorization. Examples: block transactions from sanctioned IP ranges, block payments to MCC 6051 (crypto) above ₹10,000 from accounts &lt;7 days old. High precision but limited recall — can only catch known patterns.</p></div>
+    <div class="cs-dcell" style="border-left:3px solid #f59e0b"><div class="cs-dctitle"><div class="cs-dicon" style="background:rgba(245,158,11,0.1)">📊</div>Layer 2: Statistical Anomaly</div><p class="cs-p" style="font-size:0.82rem"><strong>Latency: 30s–5min.</strong> Rolling window analysis comparing current behavior against the account's own historical baseline. A transaction that is 4σ above the account's 30-day spend average triggers a review flag — regardless of absolute amount. This catches account-specific deviations that rule-based systems miss.</p></div>
+    <div class="cs-dcell" style="border-left:3px solid #8b5cf6"><div class="cs-dctitle"><div class="cs-dicon" style="background:rgba(139,92,246,0.1)">🕸️</div>Layer 3: Network / Graph Analysis</div><p class="cs-p" style="font-size:0.82rem"><strong>Latency: Batch (hourly).</strong> Maps fund flow between accounts. Identifies "hub-and-spoke" patterns where one account distributes to many receivers (mule coordination), or chains of pass-through transfers (layering). Also clusters new accounts by shared registration attributes to surface bot farms.</p></div>
+    <div class="cs-dcell" style="border-left:3px solid #3b82f6"><div class="cs-dctitle"><div class="cs-dicon" style="background:rgba(59,130,246,0.1)">🧠</div>Layer 4: ML Scoring</div><p class="cs-p" style="font-size:0.82rem"><strong>Latency: 200–500ms.</strong> A gradient boosted model scores each transaction on ~150 features derived from transaction data, device signals, and behavioral history. The score is consumed by downstream rule engines. Model is retrained weekly on confirmed fraud labels. This catches novel patterns that no rule yet covers.</p></div>
+  </div>
+  <h3 class="cs-h3">Detection Priority Matrix</h3>
+  <table class="cs-sig-table">
+    <thead><tr><th>Fraud Type</th><th>Primary Detection Layer</th><th>Key Signal</th><th>Avg Detection Window</th></tr></thead>
+    <tbody>
+      <tr><td>ATO — Credential Stuffing</td><td>Layer 1 (Login rules)</td><td>Login velocity by IP / failed attempts</td><td>&lt; 5 min</td></tr>
+      <tr><td>ATO — Manual Takeover</td><td>Layer 2 (Behavioral anomaly)</td><td>New device + profile change + txn spike</td><td>15–60 min</td></tr>
+      <tr><td>FAC — Bot Farm</td><td>Layer 3 (Network clustering)</td><td>Registration cohort similarity</td><td>1–6 hrs (batch)</td></tr>
+      <tr><td>FAC — Synthetic Identity</td><td>Layer 2 + Layer 4 (ML)</td><td>Bust-out velocity + ML score</td><td>30–90 days (late)</td></tr>
+      <tr><td>Mule Fraud</td><td>Layer 3 (Graph analysis)</td><td>Hub-and-spoke fund flow pattern</td><td>24–48 hrs</td></tr>
+    </tbody>
+  </table>
+</div></div>
+
+<!-- 05 SIGNALS -->
+<div id="cs-signals" style="padding:72px 80px;">
+<div style="max-width:960px;margin:0 auto;">
+  <div class="cs-eyebrow">05 — Behavioral Signal Analysis</div>
+  <h2 class="cs-h2">Fraud leaves <em>fingerprints</em> in the data.</h2>
+  <p class="cs-lead">Every fraudulent action creates a measurable deviation from expected behavior. The analyst's job is to define "expected" precisely enough that deviations become actionable.</p>
+  <h3 class="cs-h3">Building the Behavioral Baseline</h3>
+  <p class="cs-p">Effective anomaly detection requires a <strong>per-account baseline</strong> — not a population average. A merchant processing ₹5L/day isn't anomalous; a personal account that suddenly processes ₹5L/day almost certainly is:</p>
+  <div class="cs-code"><span class="cs-code-lbl">SQL — ClickHouse</span><span class="cs-cm">-- Build per-account behavioral baseline (30-day rolling)</span>
+<span class="cs-kw">WITH</span> baseline <span class="cs-kw">AS</span> (
+  <span class="cs-kw">SELECT</span>
+    account_id,
+    <span class="cs-fn">count</span>()                        <span class="cs-kw">AS</span> txn_count_30d,
+    <span class="cs-fn">avg</span>(amount_paise)              <span class="cs-kw">AS</span> avg_amount,
+    <span class="cs-fn">stddevPop</span>(amount_paise)        <span class="cs-kw">AS</span> std_amount,
+    <span class="cs-fn">quantile</span>(<span class="cs-num">0.95</span>)(amount_paise)    <span class="cs-kw">AS</span> p95_amount,
+    <span class="cs-fn">uniqExact</span>(device_fingerprint) <span class="cs-kw">AS</span> unique_devices,
+    <span class="cs-fn">uniqExact</span>(login_country)      <span class="cs-kw">AS</span> unique_countries
+  <span class="cs-kw">FROM</span> payments_unified
+  <span class="cs-kw">WHERE</span> ts &gt;= <span class="cs-fn">now</span>() - <span class="cs-kw">INTERVAL</span> <span class="cs-num">30</span> <span class="cs-kw">DAY</span>
+    <span class="cs-kw">AND</span> status = <span class="cs-str">'SUCCESS'</span>
+  <span class="cs-kw">GROUP BY</span> account_id
+)
+<span class="cs-kw">SELECT</span>
+  t.account_id, t.txn_id, t.amount_paise,
+  (t.amount_paise - b.avg_amount) / <span class="cs-fn">nullIf</span>(b.std_amount, <span class="cs-num">0</span>) <span class="cs-kw">AS</span> z_score,
+  <span class="cs-kw">CASE</span>
+    <span class="cs-kw">WHEN</span> z_score &gt; <span class="cs-num">4</span> <span class="cs-kw">THEN</span> <span class="cs-str">'CRITICAL'</span>
+    <span class="cs-kw">WHEN</span> z_score &gt; <span class="cs-num">3</span> <span class="cs-kw">THEN</span> <span class="cs-str">'HIGH'</span>
+    <span class="cs-kw">WHEN</span> z_score &gt; <span class="cs-num">2</span> <span class="cs-kw">THEN</span> <span class="cs-str">'MEDIUM'</span>
+    <span class="cs-kw">ELSE</span>              <span class="cs-str">'NORMAL'</span>
+  <span class="cs-kw">END</span> <span class="cs-kw">AS</span> risk_tier
+<span class="cs-kw">FROM</span> payments_unified t
+<span class="cs-kw">JOIN</span> baseline b <span class="cs-kw">USING</span> (account_id)
+<span class="cs-kw">WHERE</span> t.ts &gt;= <span class="cs-fn">now</span>() - <span class="cs-kw">INTERVAL</span> <span class="cs-num">5</span> <span class="cs-kw">MINUTE</span>
+  <span class="cs-kw">AND</span> z_score &gt; <span class="cs-num">2</span>;</div>
+  <h3 class="cs-h3">ATO Detection Query — Triple Conjunction</h3>
+  <p class="cs-p">The most reliable ATO signal is the combination of a <strong>new device + profile change + high-value transaction within a 6-hour window</strong>. This triple-conjunction pattern has a very low false positive rate:</p>
+  <div class="cs-code"><span class="cs-code-lbl">SQL — ATO Detection</span><span class="cs-cm">-- New device + profile change + high txn within 6 hours</span>
+<span class="cs-kw">WITH</span>
+new_device_logins <span class="cs-kw">AS</span> (
+  <span class="cs-kw">SELECT</span> account_id, device_fingerprint, login_ts, login_country
+  <span class="cs-kw">FROM</span> login_events l
+  <span class="cs-kw">WHERE</span> login_ts &gt;= <span class="cs-fn">now</span>() - <span class="cs-kw">INTERVAL</span> <span class="cs-num">6</span> <span class="cs-kw">HOUR</span>
+    <span class="cs-kw">AND NOT EXISTS</span> (
+      <span class="cs-kw">SELECT</span> <span class="cs-num">1</span> <span class="cs-kw">FROM</span> login_events h
+      <span class="cs-kw">WHERE</span> h.account_id = l.account_id
+        <span class="cs-kw">AND</span> h.device_fingerprint = l.device_fingerprint
+        <span class="cs-kw">AND</span> h.login_ts &lt; l.login_ts - <span class="cs-kw">INTERVAL</span> <span class="cs-num">90</span> <span class="cs-kw">DAY</span>
+    )
+),
+profile_changes <span class="cs-kw">AS</span> (
+  <span class="cs-kw">SELECT</span> account_id, change_type, changed_at
+  <span class="cs-kw">FROM</span> audit_log
+  <span class="cs-kw">WHERE</span> change_type <span class="cs-kw">IN</span> (<span class="cs-str">'PASSWORD_RESET'</span>, <span class="cs-str">'EMAIL_CHANGE'</span>, <span class="cs-str">'PHONE_CHANGE'</span>)
+    <span class="cs-kw">AND</span> changed_at &gt;= <span class="cs-fn">now</span>() - <span class="cs-kw">INTERVAL</span> <span class="cs-num">6</span> <span class="cs-kw">HOUR</span>
+),
+high_value_txns <span class="cs-kw">AS</span> (
+  <span class="cs-kw">SELECT</span> t.account_id, t.txn_id, t.amount_paise, t.ts
+  <span class="cs-kw">FROM</span> payments_unified t
+  <span class="cs-kw">JOIN</span> account_baseline b <span class="cs-kw">USING</span> (account_id)
+  <span class="cs-kw">WHERE</span> t.ts &gt;= <span class="cs-fn">now</span>() - <span class="cs-kw">INTERVAL</span> <span class="cs-num">6</span> <span class="cs-kw">HOUR</span>
+    <span class="cs-kw">AND</span> t.amount_paise &gt; b.p95_amount * <span class="cs-num">3</span>
+    <span class="cs-kw">AND</span> t.status = <span class="cs-str">'SUCCESS'</span>
+)
+<span class="cs-kw">SELECT</span>
+  d.account_id, d.login_country, p.change_type,
+  h.txn_id, h.amount_paise / <span class="cs-num">100</span> <span class="cs-kw">AS</span> amount_inr,
+  <span class="cs-str">'ATO_HIGH_CONFIDENCE'</span> <span class="cs-kw">AS</span> fraud_signal
+<span class="cs-kw">FROM</span> new_device_logins d
+<span class="cs-kw">JOIN</span> profile_changes p <span class="cs-kw">ON</span> d.account_id = p.account_id
+<span class="cs-kw">JOIN</span> high_value_txns h <span class="cs-kw">ON</span> d.account_id = h.account_id
+<span class="cs-kw">ORDER BY</span> h.amount_paise <span class="cs-kw">DESC</span>;</div>
+  <h3 class="cs-h3">FAC Bot Farm Cohort Detection</h3>
+  <div class="cs-code"><span class="cs-code-lbl">SQL — FAC Bot Farm Detection</span><span class="cs-cm">-- Cluster new accounts by shared registration signals</span>
+<span class="cs-kw">WITH</span> new_accounts <span class="cs-kw">AS</span> (
+  <span class="cs-kw">SELECT</span>
+    account_id,
+    <span class="cs-fn">substring</span>(registration_ip, <span class="cs-num">1</span>,
+      <span class="cs-fn">findLastOccurrence</span>(registration_ip, <span class="cs-str">'.'</span>)) <span class="cs-kw">AS</span> ip_subnet,
+    email_domain, device_fingerprint, registration_ts
+  <span class="cs-kw">FROM</span> accounts
+  <span class="cs-kw">WHERE</span> registration_ts &gt;= <span class="cs-fn">now</span>() - <span class="cs-kw">INTERVAL</span> <span class="cs-num">24</span> <span class="cs-kw">HOUR</span>
+),
+cohort_analysis <span class="cs-kw">AS</span> (
+  <span class="cs-kw">SELECT</span>
+    ip_subnet, email_domain,
+    <span class="cs-fn">count</span>()                       <span class="cs-kw">AS</span> account_count,
+    <span class="cs-fn">uniqExact</span>(device_fingerprint) <span class="cs-kw">AS</span> unique_devices,
+    <span class="cs-fn">dateDiff</span>(<span class="cs-str">'second'</span>,
+      <span class="cs-fn">min</span>(registration_ts),
+      <span class="cs-fn">max</span>(registration_ts))         <span class="cs-kw">AS</span> time_span_secs,
+    account_count / <span class="cs-fn">nullIf</span>(unique_devices, <span class="cs-num">0</span>) <span class="cs-kw">AS</span> accounts_per_device
+  <span class="cs-kw">FROM</span> new_accounts
+  <span class="cs-kw">GROUP BY</span> ip_subnet, email_domain
+)
+<span class="cs-kw">SELECT</span> *,
+  <span class="cs-kw">CASE</span>
+    <span class="cs-kw">WHEN</span> accounts_per_device &gt; <span class="cs-num">5</span>
+      <span class="cs-kw">AND</span> time_span_secs &lt; <span class="cs-num">3600</span>  <span class="cs-kw">THEN</span> <span class="cs-str">'BOT_FARM_HIGH'</span>
+    <span class="cs-kw">WHEN</span> account_count &gt; <span class="cs-num">10</span>
+      <span class="cs-kw">AND</span> unique_devices &lt; account_count / <span class="cs-num">2</span> <span class="cs-kw">THEN</span> <span class="cs-str">'BOT_FARM_MEDIUM'</span>
+    <span class="cs-kw">ELSE</span> <span class="cs-str">'NORMAL'</span>
+  <span class="cs-kw">END</span> <span class="cs-kw">AS</span> bot_farm_signal
+<span class="cs-kw">FROM</span> cohort_analysis
+<span class="cs-kw">WHERE</span> account_count &gt;= <span class="cs-num">5</span>
+<span class="cs-kw">ORDER BY</span> accounts_per_device <span class="cs-kw">DESC</span>;</div>
+</div></div>
+
+<!-- 06 RULES -->
+<div id="cs-rules" style="padding:72px 80px;background:#080a0d;">
+<div style="max-width:960px;margin:0 auto;">
+  <div class="cs-eyebrow">06 — Rule Design &amp; Impact Analysis</div>
+  <h2 class="cs-h2">Rules are <em>hypotheses.</em> Every change has a blast radius.</h2>
+  <p class="cs-lead">Writing a fraud rule is easy. Writing one that reduces fraud without blocking legitimate customers requires rigorous impact analysis before every deployment.</p>
+  <div class="cs-rule-card">
+    <div class="cs-rule-hdr"><div class="cs-rule-name">RULE-ATO-001 — New Device + High Value</div><div style="display:flex;gap:8px"><span class="cs-chip cs-chip-r" style="padding:3px 10px;font-size:0.6rem">ATO</span><span class="cs-chip cs-chip-a" style="padding:3px 10px;font-size:0.6rem">Real-time</span></div></div>
+    <div class="cs-rule-desc">Flag for step-up authentication when: (1) login from device not seen in 90 days AND (2) transaction amount &gt; 3× account P95. Action: require OTP before authorizing. Do not hard-block to avoid false positive lockouts.</div>
+    <div class="cs-code" style="margin:10px 0 0"><span class="cs-kw">IF</span> device_is_new(<span class="cs-num">90</span>d) <span class="cs-kw">AND</span> amount &gt; account_p95 * <span class="cs-num">3</span>
+<span class="cs-kw">THEN</span> action = <span class="cs-str">'STEP_UP_AUTH'</span>, risk_score += <span class="cs-num">45</span></div>
+  </div>
+  <div class="cs-rule-card">
+    <div class="cs-rule-hdr"><div class="cs-rule-name">RULE-ATO-002 — Profile Change + Transaction Proximity</div><div style="display:flex;gap:8px"><span class="cs-chip cs-chip-r" style="padding:3px 10px;font-size:0.6rem">ATO</span><span class="cs-chip cs-chip-a" style="padding:3px 10px;font-size:0.6rem">Real-time</span></div></div>
+    <div class="cs-rule-desc">Hard block any transaction above ₹5,000 within 6 hours of a password reset, email change, or phone number change. The combination of credential modification followed by a transaction is a near-certain ATO signal.</div>
+    <div class="cs-code" style="margin:10px 0 0"><span class="cs-kw">IF</span> profile_change_within(<span class="cs-num">6</span>h) <span class="cs-kw">AND</span> amount_inr &gt; <span class="cs-num">5000</span>
+<span class="cs-kw">THEN</span> action = <span class="cs-str">'HARD_BLOCK'</span>, alert_team = <span class="cs-str">'RISK_OPS'</span>, risk_score += <span class="cs-num">80</span></div>
+  </div>
+  <div class="cs-rule-card">
+    <div class="cs-rule-hdr"><div class="cs-rule-name">RULE-FAC-001 — New Account High-Risk MCC</div><div style="display:flex;gap:8px"><span class="cs-chip cs-chip-p" style="padding:3px 10px;font-size:0.6rem">FAC</span><span class="cs-chip cs-chip-a" style="padding:3px 10px;font-size:0.6rem">Real-time</span></div></div>
+    <div class="cs-rule-desc">Block payments to MCC categories 6051 (crypto), 6211 (securities), and 7995 (gambling) for accounts less than 7 days old or with fewer than 5 prior transactions. These MCCs are primary cashout vectors for new fraudulent accounts.</div>
+    <div class="cs-code" style="margin:10px 0 0"><span class="cs-kw">IF</span> (account_age_days &lt; <span class="cs-num">7</span> <span class="cs-kw">OR</span> prior_txn_count &lt; <span class="cs-num">5</span>)
+   <span class="cs-kw">AND</span> mcc <span class="cs-kw">IN</span> (<span class="cs-num">6051</span>, <span class="cs-num">6211</span>, <span class="cs-num">7995</span>)
+<span class="cs-kw">THEN</span> action = <span class="cs-str">'HARD_BLOCK'</span>, risk_score += <span class="cs-num">70</span></div>
+  </div>
+  <div class="cs-rule-card">
+    <div class="cs-rule-hdr"><div class="cs-rule-name">RULE-VEL-001 — Transaction Velocity Spike</div><div style="display:flex;gap:8px"><span class="cs-chip cs-chip-b" style="padding:3px 10px;font-size:0.6rem">ATO + FAC</span><span class="cs-chip cs-chip-g" style="padding:3px 10px;font-size:0.6rem">Near Real-time</span></div></div>
+    <div class="cs-rule-desc">Flag accounts with more than 3 transactions in any 10-minute window where the account's typical frequency is less than 2 transactions per hour. Velocity spikes are characteristic of automated cashout scripts.</div>
+    <div class="cs-code" style="margin:10px 0 0"><span class="cs-kw">IF</span> txn_count_last_10min &gt; <span class="cs-num">3</span>
+   <span class="cs-kw">AND</span> account_typical_hourly_txns &lt; <span class="cs-num">2</span>
+<span class="cs-kw">THEN</span> action = <span class="cs-str">'SOFT_BLOCK'</span>, risk_score += <span class="cs-num">55</span>  <span class="cs-cm">-- pause + alert</span></div>
+  </div>
+  <h3 class="cs-h3">Blast Radius Analysis Before Deployment</h3>
+  <p class="cs-p">Before any rule goes live, a blast radius analysis measures what percentage of clean transactions would have been incorrectly flagged:</p>
+  <div class="cs-code"><span class="cs-code-lbl">SQL — Blast Radius</span><span class="cs-cm">-- Simulate rule against 30-day historical data before deployment</span>
+<span class="cs-kw">WITH</span> simulation <span class="cs-kw">AS</span> (
+  <span class="cs-kw">SELECT</span>
+    t.txn_id, t.merchant_category, t.amount_paise,
+    (profile_change_within_6h <span class="cs-kw">AND</span> t.amount_paise &gt; <span class="cs-num">500000</span>) <span class="cs-kw">AS</span> would_block,
+    (t.txn_id <span class="cs-kw">IN</span> (<span class="cs-kw">SELECT</span> txn_id <span class="cs-kw">FROM</span> confirmed_fraud))   <span class="cs-kw">AS</span> is_fraud
+  <span class="cs-kw">FROM</span> payments_historical_30d t
+  <span class="cs-kw">JOIN</span> account_profile_changes a <span class="cs-kw">USING</span> (account_id)
+)
+<span class="cs-kw">SELECT</span>
+  merchant_category,
+  <span class="cs-fn">countIf</span>(would_block)                  <span class="cs-kw">AS</span> total_blocked,
+  <span class="cs-fn">countIf</span>(would_block <span class="cs-kw">AND</span> is_fraud)     <span class="cs-kw">AS</span> true_positives,
+  <span class="cs-fn">countIf</span>(would_block <span class="cs-kw">AND NOT</span> is_fraud) <span class="cs-kw">AS</span> false_positives,
+  <span class="cs-fn">round</span>(true_positives / total_blocked * <span class="cs-num">100</span>, <span class="cs-num">2</span>) <span class="cs-kw">AS</span> precision_pct
+<span class="cs-kw">FROM</span> simulation
+<span class="cs-kw">GROUP BY</span> merchant_category
+<span class="cs-kw">ORDER BY</span> false_positives <span class="cs-kw">DESC</span>;</div>
+</div></div>
+
+<!-- 07 RESOLUTION -->
+<div id="cs-resolution" style="padding:72px 80px;">
+<div style="max-width:960px;margin:0 auto;">
+  <div class="cs-eyebrow">07 — Containment &amp; Resolution</div>
+  <h2 class="cs-h2">Detection is half the battle. <em>Resolution</em> is the other half.</h2>
+  <p class="cs-lead">When a fraud case is confirmed, the response must be fast, structured, and minimize both fraud loss and customer impact.</p>
+  <h3 class="cs-h3">ATO Containment Playbook</h3>
+  <div class="cs-res-steps">
+    <div class="cs-res-step"><div class="cs-res-num"></div><div class="cs-res-body"><div class="cs-res-title">Immediate Account Freeze (T+0)</div><div class="cs-res-desc">As soon as the ATO signal crosses the HIGH threshold, freeze all outbound transactions. Do not close the account — this preserves the ability to reverse pending transactions. Send an automated notification to the account's verified pre-attack contact.</div></div></div>
+    <div class="cs-res-step"><div class="cs-res-num"></div><div class="cs-res-body"><div class="cs-res-title">Transaction Reversal Window (T+0 to T+30min)</div><div class="cs-res-desc">For transactions in PENDING or AUTHORIZED state, initiate reversal immediately. For SETTLED transactions, open a chargeback/recall with the receiving institution. Time is critical — once funds are forwarded by the mule, recovery probability drops below 20%.</div></div></div>
+    <div class="cs-res-step"><div class="cs-res-num"></div><div class="cs-res-body"><div class="cs-res-title">Payee Account Flagging (T+5min)</div><div class="cs-res-desc">The payee that received the fraudulent funds must be flagged and frozen simultaneously. This account is likely a mule. Run it through the network graph to identify other accounts in the same cluster — ATO cashout networks are rarely single-account operations.</div></div></div>
+    <div class="cs-res-step"><div class="cs-res-num"></div><div class="cs-res-body"><div class="cs-res-title">Root Cause Classification (T+1hr)</div><div class="cs-res-desc">Classify the attack vector: credential stuffing, phishing, social engineering, or insider threat. Pull the full data lineage — from login attempt through transaction — and document the attack path for the case file. This classification feeds back into rule improvement.</div></div></div>
+    <div class="cs-res-step"><div class="cs-res-num"></div><div class="cs-res-body"><div class="cs-res-title">Account Recovery (T+24hr)</div><div class="cs-res-desc">Restore access to the legitimate account holder via out-of-band verification. Reset all credentials. Review and remove any profile changes made during the attack window. Issue a formal incident notification to the customer.</div></div></div>
+    <div class="cs-res-step"><div class="cs-res-num"></div><div class="cs-res-body"><div class="cs-res-title">Rule Refinement (T+48hr)</div><div class="cs-res-desc">If this attack bypassed existing rules, add it to the false-negative log. Analyze what signal was present that no rule was catching. Design a new rule, run blast radius analysis, and deploy. This feedback loop is what makes detection continuously improve.</div></div></div>
+  </div>
+  <div class="cs-callout cs-callout-b">
+    <div class="cs-callout-lbl">📋 Bot Farm Response</div>
+    <p class="cs-p" style="margin:0">When a bot farm cohort is identified: (1) Batch-suspend all accounts in the cluster <strong>simultaneously</strong> — staggered suspension allows attackers to detect the pattern and adapt. (2) Flag all transactions from cluster accounts for reversal review. (3) Block the IP subnet and device fingerprint classes at the WAF level. (4) If referral codes were abused, invalidate the associated rewards in bulk.</p>
+  </div>
+  <div class="cs-callout cs-callout-a">
+    <div class="cs-callout-lbl">🧬 Synthetic Identity Response</div>
+    <p class="cs-p" style="margin:0">Synthetic identities require a different approach: (1) Do not close the account immediately — this tips off the fraudster network. Instead, silently apply enhanced monitoring and transaction limits. (2) Submit identity documents to the KYC provider for re-verification. (3) If confirmed synthetic, file a Suspicious Transaction Report (STR) with the FIU. (4) Use the confirmed label to improve the ML model's precision on future cases.</p>
+  </div>
+</div></div>
+
+<!-- 08 RESULTS -->
+<div id="cs-results" style="padding:72px 80px;background:#0f1318;">
+<div style="max-width:960px;margin:0 auto;">
+  <div class="cs-eyebrow">08 — Outcomes &amp; Impact</div>
+  <h2 class="cs-h2">The numbers that <em>matter.</em></h2>
+  <p class="cs-lead">Fraud operations success is measured on two axes simultaneously: how much fraud was caught, and how little legitimate activity was disrupted.</p>
+  <div class="cs-results-grid">
+    <div class="cs-res-cell"><span class="cs-res-num2" style="color:#10b981">22%</span><div class="cs-res-lbl">False Positive Reduction</div><div class="cs-res-sub">Fewer legitimate customers blocked after rule precision tuning</div></div>
+    <div class="cs-res-cell"><span class="cs-res-num2" style="color:#ef4444">$400K+</span><div class="cs-res-lbl">Fraud Loss Prevented</div><div class="cs-res-sub">High-value suspicious activities identified and escalated before funds cleared</div></div>
+    <div class="cs-res-cell"><span class="cs-res-num2" style="color:#f59e0b">15–20%</span><div class="cs-res-lbl">Repeat Fraud Reduction</div><div class="cs-res-sub">Through improved rule design and faster recidivism detection</div></div>
+    <div class="cs-res-cell"><span class="cs-res-num2" style="color:#3b82f6">&lt;5min</span><div class="cs-res-lbl">ATO Detection Time</div><div class="cs-res-sub">For credential-stuffing ATOs via Layer 1 login velocity rules</div></div>
+    <div class="cs-res-cell"><span class="cs-res-num2" style="color:#8b5cf6">90+</span><div class="cs-res-lbl">Daily Alerts Resolved</div><div class="cs-res-sub">High-risk alerts triaged per analyst per day</div></div>
+    <div class="cs-res-cell"><span class="cs-res-num2" style="color:#10b981">98%+</span><div class="cs-res-lbl">QA Score Maintained</div><div class="cs-res-sub">Consistent investigation quality in SLA-driven triage</div></div>
+  </div>
+  <h3 class="cs-h3">Key Learnings</h3>
+  <p class="cs-p"><strong>1. False positives are not just a customer experience problem — they are an intelligence problem.</strong> Every incorrectly blocked legitimate transaction is a signal that the rule is miscalibrated. Tracking false positive rates by segment reveals exactly which rules need adjustment.</p>
+  <p class="cs-p"><strong>2. Fraud detection and fraud investigation must be coupled.</strong> Rules fire the alert; the investigation determines the root cause. Without systematic root cause classification, the same attack pattern will recur in slightly modified form. Every investigated case should generate at least one rule improvement hypothesis.</p>
+  <p class="cs-p"><strong>3. Attackers adapt to detection.</strong> Static rules decay rapidly. A fraud rule that achieved 85% precision at launch will typically degrade to 60% within 90 days as attackers learn to avoid its trigger conditions. Continuous rule review and model retraining are the operating rhythm of effective fraud risk management.</p>
+  <p class="cs-p"><strong>4. The blast radius framework must be non-negotiable.</strong> Every rule change, however small, must be simulated against historical data before deployment. This is the difference between deploying a rule that blocks 500 legitimate customers per day and one that doesn't.</p>
+  <div class="cs-callout cs-callout-g">
+    <div class="cs-callout-lbl">✅ Core Principle</div>
+    <p class="cs-p" style="margin:0">The best fraud analysts don't just investigate individual incidents — they model the <em>system</em> that produces fraud. Every case is a data point. Every rule is a hypothesis. Every outcome is a label. The goal is a continuously improving signal-to-noise ratio across the entire transaction portfolio.</p>
+  </div>
+</div></div>
+
+<!-- Footer -->
+<div class="cs-footer">
+  <div><div class="cs-fn-name">Fiona Jothi Sylvester</div><div class="cs-fn-role">Data Analyst · Fraud &amp; Risk Analytics · Regulatory Reporting</div></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <span class="cs-chip cs-chip-r">6+ Years Experience</span>
+    <span class="cs-chip cs-chip-b">PayPal · Vunet Systems</span>
+    <span class="cs-chip cs-chip-g">Mumbai / Bengaluru</span>
+  </div>
+</div>
+
+</div><!-- end caseStudyOverlay -->
+
+<script>
+function openCaseStudy() {
+  document.getElementById('caseStudyOverlay').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  document.getElementById('caseStudyOverlay').scrollTop = 0;
+}
+function closeCaseStudy() {
+  document.getElementById('caseStudyOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+</script>
+
+<!-- ═══════════════════ LINEAGE OVERLAY ═══════════════════ -->
+<div id="lineageOverlay" style="
+  display:none;position:fixed;inset:0;z-index:500;
+  background:#06090f;flex-direction:column;font-family:'Space Mono',monospace;">
+
+  <!-- Top bar -->
+  <div style="display:flex;align-items:center;justify-content:space-between;
+    padding:14px 28px;background:rgba(13,20,32,0.97);border-bottom:1px solid #1e2d45;
+    flex-shrink:0;">
+    <div style="display:flex;align-items:center;gap:20px">
+      <button onclick="closeLineage()" style="background:none;border:none;
+        color:#64748b;font-family:'Space Mono',monospace;font-size:0.7rem;
+        letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;
+        transition:color 0.2s;display:flex;align-items:center;gap:8px;"
+        onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#64748b'">
+        ← Portfolio
+      </button>
+      <div style="font-family:'Space Mono',monospace;font-size:0.65rem;color:#64748b;letter-spacing:0.1em;text-transform:uppercase">Data Lineage · Payment Analytics Pipeline</div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div id="lgLegend" style="display:flex;align-items:center;gap:6px;padding:10px 28px;
+    background:rgba(6,9,15,0.8);border-bottom:1px solid #1e2d45;flex-shrink:0;flex-wrap:wrap;">
+    <span style="font-size:0.6rem;color:#64748b;letter-spacing:0.12em;text-transform:uppercase;margin-right:8px">Layers:</span>
+    <div class="lg-legend-item" data-lg-layer="source" style="color:#22d3ee"><div style="width:8px;height:8px;border-radius:2px;background:#0e7490;flex-shrink:0"></div>Source Systems</div>
+    <div class="lg-legend-item" data-lg-layer="ingest" style="color:#a78bfa"><div style="width:8px;height:8px;border-radius:2px;background:#6d28d9;flex-shrink:0"></div>Ingestion</div>
+    <div class="lg-legend-item" data-lg-layer="transform" style="color:#34d399"><div style="width:8px;height:8px;border-radius:2px;background:#065f46;flex-shrink:0"></div>Transform</div>
+    <div class="lg-legend-item" data-lg-layer="aggregate" style="color:#fbbf24"><div style="width:8px;height:8px;border-radius:2px;background:#92400e;flex-shrink:0"></div>Aggregation</div>
+    <div class="lg-legend-item" data-lg-layer="report" style="color:#60a5fa"><div style="width:8px;height:8px;border-radius:2px;background:#1e40af;flex-shrink:0"></div>Reporting</div>
+    <div class="lg-legend-item" data-lg-layer="alert" style="color:#f87171"><div style="width:8px;height:8px;border-radius:2px;background:#991b1b;flex-shrink:0"></div>Anomaly/Alert</div>
+    <div style="width:1px;height:16px;background:#1e2d45;margin:0 8px"></div>
+    <span style="font-size:0.62rem;color:#64748b">Click nodes to inspect · Drag to pan · Scroll to zoom</span>
+  </div>
+
+  <!-- Canvas wrap -->
+  <div id="lgCanvasWrap" style="flex:1;position:relative;overflow:hidden">
+    <canvas id="lgCanvas" style="position:absolute;inset:0;cursor:grab"></canvas>
+
+    <!-- Detail panel -->
+    <div id="lgDetailPanel" style="position:absolute;right:20px;top:20px;width:320px;
+      background:rgba(13,20,32,0.97);border:1px solid #1e2d45;border-radius:12px;
+      padding:24px;backdrop-filter:blur(16px);transform:translateX(360px);
+      transition:transform 0.35s cubic-bezier(0.16,1,0.3,1);z-index:50;pointer-events:none">
+      <button onclick="lgClosePanel()" style="position:absolute;top:14px;right:14px;
+        background:none;border:none;color:#64748b;font-size:1rem;cursor:pointer">✕</button>
+      <div id="lgPanelContent"></div>
+    </div>
+
+    <!-- Controls -->
+    <div style="position:absolute;bottom:20px;left:20px;display:flex;flex-direction:column;gap:8px">
+      <button class="lg-ctrl" onclick="lgZoom(1.2)">+</button>
+      <button class="lg-ctrl" onclick="lgZoom(0.83)">−</button>
+      <button class="lg-ctrl" onclick="lgReset()">⟳</button>
+    </div>
+
+    <!-- Minimap -->
+    <div style="position:absolute;bottom:20px;right:20px;width:160px;height:100px;
+      background:rgba(13,20,32,0.9);border:1px solid #1e2d45;border-radius:8px;overflow:hidden">
+      <canvas id="lgMinimap" style="position:absolute;inset:0"></canvas>
+    </div>
+
+    <div id="lgTooltip" style="position:absolute;background:rgba(13,20,32,0.95);
+      border:1px solid #1e2d45;border-radius:6px;padding:8px 14px;font-size:0.7rem;
+      color:#e2e8f0;pointer-events:none;z-index:200;white-space:nowrap;display:none;
+      backdrop-filter:blur(8px)"></div>
+  </div>
+
+  <!-- Stats strip -->
+  <div style="display:flex;border-top:1px solid #1e2d45;flex-shrink:0;background:rgba(6,9,15,0.9)">
+    <div class="lg-stat"><div class="lg-stat-n">12</div><div class="lg-stat-l">Source Tables</div></div>
+    <div class="lg-stat"><div class="lg-stat-n">50K+</div><div class="lg-stat-l">Daily Transactions</div></div>
+    <div class="lg-stat"><div class="lg-stat-n">300+</div><div class="lg-stat-l">KPI Metrics</div></div>
+    <div class="lg-stat"><div class="lg-stat-n">6</div><div class="lg-stat-l">Pipeline Layers</div></div>
+    <div class="lg-stat"><div class="lg-stat-n">&lt;50ms</div><div class="lg-stat-l">Query Latency</div></div>
+    <div class="lg-stat" style="border-right:none"><div class="lg-stat-n">2×</div><div class="lg-stat-l">Perf vs ELK</div></div>
+  </div>
+</div>
+
+<style>
+  .lg-legend-item {
+    display:flex;align-items:center;gap:6px;padding:3px 10px;border-radius:4px;
+    font-size:0.62rem;letter-spacing:0.08em;cursor:pointer;border:1px solid transparent;
+    transition:all 0.2s;user-select:none;
+  }
+  .lg-legend-item:hover { border-color:currentColor; }
+  .lg-legend-item.lg-dimmed { opacity:0.3; }
+  .lg-ctrl {
+    width:36px;height:36px;background:rgba(13,20,32,0.9);border:1px solid #1e2d45;
+    border-radius:8px;color:#64748b;font-size:1rem;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:all 0.2s;
+  }
+  .lg-ctrl:hover { border-color:#00d4ff;color:#00d4ff; }
+  .lg-stat {
+    flex:1;display:flex;flex-direction:column;align-items:center;
+    padding:10px 16px;border-right:1px solid #1e2d45;gap:2px;
+  }
+  .lg-stat-n { font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:#00d4ff; }
+  .lg-stat-l { font-size:0.58rem;color:#64748b;letter-spacing:0.1em;text-transform:uppercase;text-align:center; }
+  .ptag { background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.15);color:#7dd3fc;font-size:0.6rem;padding:3px 9px;border-radius:100px; }
+  .panel-sql { margin-top:16px;background:rgba(0,0,0,0.4);border:1px solid #1e2d45;border-radius:6px;padding:12px;font-size:0.65rem;line-height:1.7;color:#7dd3fc;overflow-x:auto;white-space:pre; }
+</style>
+
+<script>
+// ── Lineage overlay open/close ────────────────────────────────────────────────
+function openLineage() {
+  const ov = document.getElementById('lineageOverlay');
+  ov.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  lgInit();
+}
+function closeLineage() {
+  document.getElementById('lineageOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+  if (lgAnimId) cancelAnimationFrame(lgAnimId);
+  lgAnimId = null;
+}
+
+// ── Lineage canvas code ───────────────────────────────────────────────────────
+const LG_COLORS = {
+  source:    { bg:'#0e7490', border:'#22d3ee', text:'#cffafe', glow:'rgba(14,116,144,0.4)' },
+  ingest:    { bg:'#5b21b6', border:'#a78bfa', text:'#ede9fe', glow:'rgba(91,33,182,0.4)'  },
+  transform: { bg:'#065f46', border:'#34d399', text:'#d1fae5', glow:'rgba(6,95,70,0.4)'    },
+  aggregate: { bg:'#78350f', border:'#fbbf24', text:'#fef3c7', glow:'rgba(120,53,15,0.4)'  },
+  report:    { bg:'#1e3a8a', border:'#60a5fa', text:'#dbeafe', glow:'rgba(30,58,138,0.4)'  },
+  alert:     { bg:'#7f1d1d', border:'#f87171', text:'#fee2e2', glow:'rgba(127,29,29,0.4)'  },
+};
+
+const LG_NODES = [
+  { id:'src_upi',    x:80,  y:180, w:150, h:56, layer:'source',    label:'UPI Transactions',      sublabel:'Raw Event Stream',
+    detail:{ type:'Source System', desc:'Real-time UPI payment events streamed from the core banking platform via Kafka. Each event carries transaction_id, payer_vpa, payee_vpa, amount, timestamp, status and merchant_category.', schema:'txn_id, payer_vpa, payee_vpa, amount, status, mcc, timestamp, bank_ref', volume:'~28K events/day', latency:'Real-time (< 200ms)', tags:['Kafka','UPI','Core Banking'], sql:`CREATE TABLE upi_raw_events (\n  txn_id    String,\n  payer_vpa String,\n  amount    Float64,\n  status    LowCardinality(String),\n  ts        DateTime64(3)\n) ENGINE = MergeTree()\nORDER BY (ts, txn_id);` }},
+  { id:'src_neft',   x:80,  y:310, w:150, h:56, layer:'source',    label:'NEFT / RTGS',           sublabel:'Batch + Real-time',
+    detail:{ type:'Source System', desc:'NEFT batch settlements and RTGS high-value real-time transfers. NEFT runs in 30-min windows; RTGS is instantaneous.', schema:'txn_id, sender_acc, receiver_acc, ifsc, amount, mode, batch_id, ts', volume:'~14K events/day', latency:'NEFT: 30-min batch · RTGS: < 1s', tags:['NEFT','RTGS','Batch','RBI'], sql:`CREATE TABLE neft_rtgs_raw (\n  txn_id String, mode Enum('NEFT','RTGS'),\n  amount Float64, ts DateTime\n) ENGINE = MergeTree()\nORDER BY (ts, mode, txn_id);` }},
+  { id:'src_card',   x:80,  y:440, w:150, h:56, layer:'source',    label:'Card Payments',         sublabel:'POS + Online',
+    detail:{ type:'Source System', desc:'Debit/credit card authorization events from POS terminals and online gateways. Includes auth, capture, and reversal events.', schema:'auth_code, card_hash, merchant_id, amount, txn_type, network, ts', volume:'~9K events/day', latency:'Real-time auth · T+1 settlement', tags:['Visa','Mastercard','POS','Online'], sql:`CREATE TABLE card_auth_events (\n  auth_code String, merchant_id String,\n  amount Float64,\n  txn_type Enum('AUTH','CAPTURE','REVERSAL'),\n  ts DateTime\n) ENGINE = MergeTree()\nORDER BY (ts, merchant_id);` }},
+  { id:'src_wallet', x:80,  y:570, w:150, h:56, layer:'source',    label:'Wallet Transfers',      sublabel:'Prepaid Instruments',
+    detail:{ type:'Source System', desc:'Prepaid wallet load, transfer and redemption events. Includes wallet-to-bank transfers and P2P wallet payments.', schema:'wallet_id, user_id, txn_type, amount, balance_after, ts', volume:'~5K events/day', latency:'Real-time', tags:['Wallet','PPI','P2P'], sql:`CREATE TABLE wallet_events (\n  wallet_id String, user_id String,\n  amount Float64, balance_after Float64,\n  ts DateTime\n) ENGINE = MergeTree()\nORDER BY (ts, wallet_id);` }},
+  { id:'ing_kafka',  x:330, y:220, w:160, h:56, layer:'ingest',    label:'Kafka Ingest Layer',    sublabel:'Topic Router',
+    detail:{ type:'Ingestion — Message Broker', desc:'Apache Kafka acts as the central ingest bus. Each payment rail publishes to a dedicated topic. A Kafka Connect ClickHouse sink writes to landing tables with exactly-once semantics.', schema:'topic: payments.{upi|neft|card|wallet}.raw', volume:'~56K msgs/day · peak 120 msg/s', latency:'< 50ms end-to-end', tags:['Apache Kafka','Kafka Connect','Exactly-once'], sql:`CREATE TABLE kafka_payments_raw\nENGINE = Kafka()\nSETTINGS\n  kafka_broker_list = 'broker:9092',\n  kafka_topic_list  = 'payments.*.raw',\n  kafka_format      = 'JSONEachRow';` }},
+  { id:'ing_dq',     x:330, y:360, w:160, h:56, layer:'ingest',    label:'DQ Validation Gate',   sublabel:'Quality Firewall',
+    detail:{ type:'Ingestion — Data Quality', desc:'All records pass through a validation gate before hitting core tables. Checks include null-key assertions, amount range guards, duplicate detection, and referential integrity.', schema:'Validates: nullability · ranges · duplicates · referential integrity', volume:'Flags ~0.3% of events on avg', latency:'< 5ms per record', tags:['DQ Rules','Deduplication','Null Checks'], sql:`CREATE MATERIALIZED VIEW mv_dq_flags TO dq_flagged AS\nSELECT *,\n  multiIf(\n    txn_id = '',    'NULL_KEY',\n    amount <= 0,    'INVALID_AMOUNT',\n    'PASS'\n  ) AS dq_status\nFROM kafka_payments_raw;` }},
+  { id:'ing_airflow',x:330, y:490, w:160, h:56, layer:'ingest',    label:'Airflow Scheduler',    sublabel:'Batch Orchestration',
+    detail:{ type:'Ingestion — Orchestration', desc:'Apache Airflow manages batch ingestion DAGs for NEFT settlement windows and EOD reconciliation jobs.', schema:'DAGs: neft_batch_ingest · eod_reconciliation · rollup_refresh', volume:'48 DAG runs/day', latency:'Batch: scheduled · max lag 30 min', tags:['Apache Airflow','DAGs','Stored Procedures'], sql:`CALL sp_ingest_neft_batch(\n  p_batch_ts := now(),\n  p_source   := 'neft_raw',\n  p_target   := 'payments_unified'\n);` }},
+  { id:'tr_unified', x:580, y:220, w:170, h:56, layer:'transform', label:'Unified Payments Table',sublabel:'Fact Table',
+    detail:{ type:'Transform — Core Fact Table', desc:'The canonical payments fact table. All four source rails are normalised into a single schema. Partitioned by day, ordered by (ts, payment_rail, txn_id).', schema:'txn_id, payment_rail, amount_paise, status, merchant_id, customer_hash, mcc, ts', volume:'~56K rows/day · ~2B rows total', latency:'Populated within 1s of ingest', tags:['ClickHouse','MergeTree','Partitioned','Fact Table'], sql:`CREATE TABLE payments_unified (\n  txn_id       String,\n  payment_rail LowCardinality(String),\n  amount_paise UInt64,\n  status       LowCardinality(String),\n  ts           DateTime\n) ENGINE = MergeTree()\nPARTITION BY toYYYYMMDD(ts)\nORDER BY (ts, payment_rail, txn_id);` }},
+  { id:'tr_enrich',  x:580, y:360, w:170, h:56, layer:'transform', label:'Enrichment Join',       sublabel:'Dimension Lookup',
+    detail:{ type:'Transform — Dimension Enrichment', desc:'Joins the unified fact table with merchant, geography, and customer-risk dimension tables using ClickHouse Dictionary (in-memory hash join) for sub-millisecond lookups.', schema:'Adds: merchant_name, city, state, tier, risk_band, mcc_category', volume:'Zero-copy join via CH Dictionary', latency:'< 1ms per row (in-memory dict)', tags:['Dictionary Join','Dimension Tables','Enrichment'], sql:`CREATE DICTIONARY merchant_dict (\n  merchant_id String, merchant_name String,\n  city String, tier UInt8\n) PRIMARY KEY merchant_id\nSOURCE(CLICKHOUSE(TABLE 'dim_merchants'))\nLAYOUT(HASHED());` }},
+  { id:'tr_lineage', x:580, y:490, w:170, h:56, layer:'transform', label:'Lineage Tracker',       sublabel:'Source-to-Target Map',
+    detail:{ type:'Transform — Lineage Metadata', desc:'Every transformed record carries a lineage_id chaining it back to the raw source event. Used for root cause analysis when downstream anomalies are detected.', schema:'lineage_id, source_table, target_table, transform_step, txn_id, created_at', volume:'One row per pipeline hop per transaction', latency:'Written synchronously', tags:['Data Lineage','Root Cause','Audit Trail'], sql:`CREATE TABLE lineage_map (\n  lineage_id   UUID DEFAULT generateUUIDv4(),\n  txn_id       String,\n  source_table String,\n  target_table String,\n  hop_seq      UInt8,\n  created_at   DateTime DEFAULT now()\n) ENGINE = MergeTree()\nORDER BY (txn_id, hop_seq);` }},
+  { id:'agg_hourly', x:840, y:200, w:170, h:56, layer:'aggregate', label:'Hourly Rollups',        sublabel:'Materialized Views',
+    detail:{ type:'Aggregation — Hourly', desc:'Materialized views compute per-hour aggregates: total volume, count, success rate, and P95 latency — sliced by payment_rail, merchant_tier, and mcc_category.', schema:'hour_ts, payment_rail, merchant_tier, txn_count, volume_paise, success_rate', volume:'24 rows × dimensions / day', latency:'Incremental on insert', tags:['Materialized View','Rollup','Hourly'], sql:`CREATE MATERIALIZED VIEW mv_hourly TO agg_hourly AS\nSELECT toStartOfHour(ts) AS hour_ts,\n  payment_rail, count() AS txn_count,\n  sum(amount_paise) AS volume_paise,\n  avg(status='SUCCESS') AS success_rate\nFROM payments_enriched\nGROUP BY hour_ts, payment_rail;` }},
+  { id:'agg_daily',  x:840, y:340, w:170, h:56, layer:'aggregate', label:'Daily Rollups',         sublabel:'EOD Aggregation',
+    detail:{ type:'Aggregation — Daily', desc:'End-of-day stored procedure aggregates hourly rollups into daily summaries computed by Airflow DAG at 23:59 IST. Includes day-over-day delta columns.', schema:'date, payment_rail, txn_count, volume_paise, dod_delta_pct, anomaly_baseline', volume:'1 row × dimensions / day', latency:'Batch at 23:59 IST', tags:['EOD','Stored Procedure','Delta'], sql:`CALL sp_daily_rollup(\n  p_date   := today(),\n  p_source := 'agg_hourly',\n  p_target := 'agg_daily'\n);` }},
+  { id:'agg_kpi',    x:840, y:470, w:170, h:56, layer:'aggregate', label:'KPI Metric Store',      sublabel:'300+ Dimensions',
+    detail:{ type:'Aggregation — KPI Store', desc:'Dedicated wide table storing all 300+ monitored KPI metrics as a named time-series. Queried directly by Grafana and the anomaly detection engine.', schema:'metric_id, metric_name, ts, value, dimension_hash, payment_rail, merchant_tier', volume:'300+ metrics × 24 hrs = 7,200+ rows/day', latency:'Updated every 5 minutes', tags:['KPI','Time Series','300+ Metrics','Grafana'], sql:`CREATE TABLE kpi_metrics (\n  metric_name LowCardinality(String),\n  ts          DateTime,\n  value       Float64,\n  payment_rail LowCardinality(String)\n) ENGINE = MergeTree()\nORDER BY (metric_name, ts)\nTTL ts + INTERVAL 90 DAY;` }},
+  { id:'rep_grafana',x:1090,y:210, w:160, h:56, layer:'report',    label:'Grafana Dashboards',   sublabel:'Real-time BI',
+    detail:{ type:'Reporting — BI Dashboard', desc:'Modular metadata-driven Grafana dashboards querying the KPI metric store and hourly rollups directly. Templates adapt dynamically to different payment journeys — reducing client onboarding time by 80%.', schema:'Queries: kpi_metrics, agg_hourly, payments_enriched', volume:'Served to 10+ banking clients', latency:'< 50ms dashboard load', tags:['Grafana','Real-time','Multi-tenant','80% faster onboarding'], sql:`SELECT ts, value, metric_name\nFROM kpi_metrics\nWHERE metric_name = $metric\n  AND ts BETWEEN $__timeFrom()\n          AND $__timeTo()\nORDER BY ts;` }},
+  { id:'rep_reg',    x:1090,y:340, w:160, h:56, layer:'report',    label:'Regulatory Reports',   sublabel:'RBI Compliance',
+    detail:{ type:'Reporting — Regulatory', desc:'Scheduled regulatory reports (RBI DPSS, NPCI reconciliation) generated from daily rollups via Airflow. Schema-locked to regulatory templates — upstream changes trigger impact assessment.', schema:'Derived from: agg_daily, payments_unified', volume:'Daily + monthly submissions', latency:'T+1 by 09:00 IST', tags:['RBI','NPCI','Compliance','Reconciliation'], sql:`SELECT toDate(ts) AS txn_date,\n  payment_rail, count() AS total_txns,\n  sum(amount_paise)/100 AS total_inr\nFROM payments_unified\nWHERE toDate(ts) = today() - 1\nGROUP BY txn_date, payment_rail;` }},
+  { id:'alt_engine', x:1090,y:470, w:160, h:56, layer:'alert',     label:'Anomaly Engine',       sublabel:'Root Cause Triage',
+    detail:{ type:'Anomaly Detection — Alert Engine', desc:'Core anomaly detection module deployed across Indian banks. Compares live KPI values against rolling baselines (7-day median ± 3σ). On breach, traces the lineage_map to pinpoint root cause.', schema:'Reads: kpi_metrics, lineage_map · Writes: anomaly_alerts', volume:'Evaluates 300+ metrics every 5 min', latency:'Alert raised within 30s of breach', tags:['Anomaly Detection','Root Cause','3σ Threshold','Deployed in Indian Banks'], sql:`WITH baseline AS (\n  SELECT metric_name,\n    median(value) AS med,\n    stddevPop(value) AS std\n  FROM kpi_metrics\n  WHERE ts >= now() - INTERVAL 7 DAY\n  GROUP BY metric_name\n)\nSELECT k.*,\n  abs(k.value - b.med)/b.std AS z_score\nFROM kpi_metrics k\nJOIN baseline b USING (metric_name)\nWHERE z_score > 3;` }},
+];
+
+const LG_EDGES = [
+  { from:'src_upi',   to:'ing_kafka',  label:'Kafka topic' },
+  { from:'src_neft',  to:'ing_kafka',  label:'Kafka topic' },
+  { from:'src_neft',  to:'ing_airflow',label:'Batch DAG' },
+  { from:'src_card',  to:'ing_kafka',  label:'Kafka topic' },
+  { from:'src_wallet',to:'ing_kafka',  label:'Kafka topic' },
+  { from:'ing_kafka', to:'ing_dq',     label:'Validate' },
+  { from:'ing_dq',    to:'tr_unified', label:'Clean rows' },
+  { from:'ing_airflow',to:'tr_unified',label:'Batch load' },
+  { from:'tr_unified',to:'tr_enrich',  label:'Dict join' },
+  { from:'tr_unified',to:'tr_lineage', label:'Lineage log' },
+  { from:'tr_enrich', to:'agg_hourly', label:'Mat. view' },
+  { from:'tr_enrich', to:'agg_kpi',    label:'Metric write' },
+  { from:'agg_hourly',to:'agg_daily',  label:'EOD rollup' },
+  { from:'agg_daily', to:'agg_kpi',    label:'KPI update' },
+  { from:'agg_kpi',   to:'rep_grafana',label:'Dashboard query' },
+  { from:'agg_daily', to:'rep_reg',    label:'Scheduled report' },
+  { from:'agg_kpi',   to:'alt_engine', label:'Metric feed' },
+  { from:'tr_lineage',to:'alt_engine', label:'Root cause trace', dashed:true },
+];
+
+let lgC, lgCtx, lgMM, lgMMCtx;
+let lgScale=1, lgOffX=40, lgOffY=40;
+let lgDragging=false, lgDSX, lgDSY, lgDOX, lgDOY;
+let lgHovered=null, lgSelected=null;
+let lgHiddenLayers=new Set();
+let lgAnimFrame=0, lgAnimId=null;
+
+function lgInit() {
+  lgC = document.getElementById('lgCanvas');
+  lgCtx = lgC.getContext('2d');
+  lgMM = document.getElementById('lgMinimap');
+  lgMMCtx = lgMM.getContext('2d');
+  lgScale=1; lgOffX=40; lgOffY=40;
+  lgSelected=null; lgHovered=null; lgHiddenLayers=new Set();
+
+  lgResize();
+  window.addEventListener('resize', lgResize);
+
+  lgC.addEventListener('mousedown', lgOnDown);
+  lgC.addEventListener('mousemove', lgOnMove);
+  lgC.addEventListener('mouseup',   lgOnUp);
+  lgC.addEventListener('mouseleave',()=>{ lgDragging=false; document.getElementById('lgTooltip').style.display='none'; });
+  lgC.addEventListener('wheel', lgOnWheel, { passive:false });
+
+  // legend items
+  document.querySelectorAll('.lg-legend-item').forEach(el => {
+    el.onclick = () => {
+      const layer = el.dataset.lgLayer;
+      if (lgHiddenLayers.has(layer)) { lgHiddenLayers.delete(layer); el.classList.remove('lg-dimmed'); }
+      else { lgHiddenLayers.add(layer); el.classList.add('lg-dimmed'); }
+    };
+  });
+
+  if (lgAnimId) cancelAnimationFrame(lgAnimId);
+  lgLoop();
+}
+
+function lgResize() {
+  if (!lgC) return;
+  const wrap = document.getElementById('lgCanvasWrap');
+  lgC.width = wrap.clientWidth;
+  lgC.height = wrap.clientHeight;
+  lgMM.width = lgMM.parentElement.clientWidth;
+  lgMM.height = lgMM.parentElement.clientHeight;
+}
+
+function lgToScreen(wx,wy){ return {x:wx*lgScale+lgOffX, y:wy*lgScale+lgOffY}; }
+function lgToWorld(sx,sy){ return {x:(sx-lgOffX)/lgScale, y:(sy-lgOffY)/lgScale}; }
+function lgNodeAt(sx,sy){
+  const w=lgToWorld(sx,sy);
+  return LG_NODES.find(n=>!lgHiddenLayers.has(n.layer)&&w.x>=n.x&&w.x<=n.x+n.w&&w.y>=n.y&&w.y<=n.y+n.h)||null;
+}
+
+function lgBP(p0,p1,p2,p3,t){ const m=1-t; return m*m*m*p0+3*m*m*t*p1+3*m*t*t*p2+t*t*t*p3; }
+
+function lgRR(ctx,x,y,w,h,r){
+  if(typeof r==='number') r=[r,r,r,r];
+  ctx.beginPath();
+  ctx.moveTo(x+r[0],y); ctx.lineTo(x+w-r[1],y); ctx.quadraticCurveTo(x+w,y,x+w,y+r[1]);
+  ctx.lineTo(x+w,y+h-r[2]); ctx.quadraticCurveTo(x+w,y+h,x+w-r[2],y+h);
+  ctx.lineTo(x+r[3],y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r[3]);
+  ctx.lineTo(x,y+r[0]); ctx.quadraticCurveTo(x,y,x+r[0],y); ctx.closePath();
+}
+
+function lgLoop(){
+  lgAnimFrame++;
+  const ctx=lgCtx, W=lgC.width, H=lgC.height;
+  ctx.clearRect(0,0,W,H);
+
+  // grid
+  ctx.save(); ctx.strokeStyle='rgba(0,212,255,0.04)'; ctx.lineWidth=1;
+  const gs=60*lgScale, ox=lgOffX%gs, oy=lgOffY%gs;
+  for(let x=ox;x<W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=oy;y<H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.restore();
+
+  // layer labels
+  [{label:'SOURCE',wx:40},{label:'INGEST',wx:300},{label:'TRANSFORM',wx:555},{label:'AGGREGATION',wx:815},{label:'REPORTING & ALERTS',wx:1065}].forEach(lx=>{
+    const sx=lx.wx*lgScale+lgOffX;
+    ctx.save(); ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.setLineDash([4,6]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(sx,60); ctx.lineTo(sx,H-40); ctx.stroke();
+    ctx.setLineDash([]); ctx.fillStyle='rgba(255,255,255,0.1)';
+    ctx.font=`${Math.max(8,9*lgScale)}px 'Space Mono',monospace`;
+    ctx.fillText(lx.label,sx+6,72); ctx.restore();
+  });
+
+  // edges
+  LG_EDGES.forEach(e=>{
+    const fn=LG_NODES.find(n=>n.id===e.from), tn=LG_NODES.find(n=>n.id===e.to);
+    if(!fn||!tn||lgHiddenLayers.has(fn.layer)||lgHiddenLayers.has(tn.layer)) return;
+    const hi=lgSelected&&(lgSelected.id===e.from||lgSelected.id===e.to);
+    const fx=(fn.x+fn.w)*lgScale+lgOffX, fy=(fn.y+fn.h/2)*lgScale+lgOffY;
+    const tx=tn.x*lgScale+lgOffX,        ty=(tn.y+tn.h/2)*lgScale+lgOffY;
+    const cx1=fx+(tx-fx)*0.45, cx2=tx-(tx-fx)*0.45;
+    ctx.save();
+    if(e.dashed) ctx.setLineDash([5*lgScale,4*lgScale]);
+    ctx.lineWidth=hi?2*lgScale:lgScale*0.9;
+    if(hi){
+      const g=ctx.createLinearGradient(fx,fy,tx,ty);
+      g.addColorStop(0,LG_COLORS[fn.layer].border); g.addColorStop(1,LG_COLORS[tn.layer].border);
+      ctx.strokeStyle=g; ctx.lineDashOffset=-(lgAnimFrame*0.5); ctx.setLineDash([6*lgScale,3*lgScale]);
+    } else { ctx.strokeStyle='rgba(100,116,139,0.3)'; }
+    ctx.beginPath(); ctx.moveTo(fx,fy); ctx.bezierCurveTo(cx1,fy,cx2,ty,tx,ty); ctx.stroke();
+    if(lgScale>0.5){
+      const t=0.97, ax=lgBP(fx,cx1,cx2,tx,t), ay=lgBP(fy,fy,ty,ty,t);
+      const bx=lgBP(fx,cx1,cx2,tx,t-0.05), by=lgBP(fy,fy,ty,ty,t-0.05);
+      const angle=Math.atan2(ay-by,ax-bx), aS=Math.max(4,6*lgScale);
+      ctx.fillStyle=hi?LG_COLORS[tn.layer].border:'rgba(100,116,139,0.5)';
+      ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(tx,ty);
+      ctx.lineTo(tx-aS*Math.cos(angle-0.4),ty-aS*Math.sin(angle-0.4));
+      ctx.lineTo(tx-aS*Math.cos(angle+0.4),ty-aS*Math.sin(angle+0.4));
+      ctx.closePath(); ctx.fill();
+    }
+    if(lgScale>0.7&&hi){
+      const mx=lgBP(fx,cx1,cx2,tx,0.5), my=lgBP(fy,fy,ty,ty,0.5);
+      ctx.setLineDash([]); ctx.fillStyle='rgba(13,20,32,0.85)';
+      const lw=ctx.measureText(e.label).width+10;
+      ctx.fillRect(mx-lw/2,my-9*lgScale,lw,14*lgScale);
+      ctx.fillStyle='rgba(148,163,184,0.9)'; ctx.font=`${Math.max(7,8*lgScale)}px 'Space Mono'`;
+      ctx.textAlign='center'; ctx.fillText(e.label,mx,my+2*lgScale);
+    }
+    ctx.restore();
+  });
+
+  // nodes
+  LG_NODES.forEach(n=>{
+    if(lgHiddenLayers.has(n.layer)) return;
+    const col=LG_COLORS[n.layer];
+    const sx=n.x*lgScale+lgOffX, sy=n.y*lgScale+lgOffY, sw=n.w*lgScale, sh=n.h*lgScale, r=8*lgScale;
+    const hi=(lgHovered&&lgHovered.id===n.id)||(lgSelected&&lgSelected.id===n.id);
+    ctx.save();
+    if(hi){ ctx.shadowColor=col.border; ctx.shadowBlur=18*lgScale; }
+    ctx.fillStyle=col.bg; lgRR(ctx,sx,sy,sw,sh,r); ctx.fill();
+    ctx.strokeStyle=hi?col.border:`${col.border}88`; ctx.lineWidth=hi?2:1;
+    lgRR(ctx,sx,sy,sw,sh,r); ctx.stroke();
+    ctx.fillStyle=col.border; ctx.shadowBlur=0;
+    lgRR(ctx,sx,sy,3*lgScale,sh,[r,0,0,r]); ctx.fill();
+    if(lgScale>0.5){
+      ctx.fillStyle=col.text; ctx.font=`bold ${Math.max(8,10*lgScale)}px 'Syne',sans-serif`;
+      ctx.textAlign='left'; ctx.shadowBlur=0;
+      ctx.fillText(n.label,sx+10*lgScale,sy+sh*0.42);
+      ctx.fillStyle=`${col.text}99`; ctx.font=`${Math.max(6,8*lgScale)}px 'Space Mono'`;
+      ctx.fillText(n.sublabel,sx+10*lgScale,sy+sh*0.72);
+    }
+    ctx.restore();
+  });
+
+  lgDrawMinimap();
+  lgAnimId=requestAnimationFrame(lgLoop);
+}
+
+function lgDrawMinimap(){
+  const mw=lgMM.width, mh=lgMM.height;
+  lgMMCtx.clearRect(0,0,mw,mh);
+  lgMMCtx.fillStyle='rgba(6,9,15,0.8)'; lgMMCtx.fillRect(0,0,mw,mh);
+  const pad=20;
+  const allX=LG_NODES.map(n=>n.x).concat(LG_NODES.map(n=>n.x+n.w));
+  const allY=LG_NODES.map(n=>n.y).concat(LG_NODES.map(n=>n.y+n.h));
+  const wx0=Math.min(...allX)-pad, wx1=Math.max(...allX)+pad;
+  const wy0=Math.min(...allY)-pad, wy1=Math.max(...allY)+pad;
+  const ms=Math.min(mw/(wx1-wx0),mh/(wy1-wy0));
+  LG_NODES.forEach(n=>{
+    if(lgHiddenLayers.has(n.layer)) return;
+    lgMMCtx.fillStyle=LG_COLORS[n.layer].border+'99';
+    lgMMCtx.fillRect((n.x-wx0)*ms,(n.y-wy0)*ms,n.w*ms,n.h*ms);
+  });
+  const v0=lgToWorld(0,0), v1=lgToWorld(lgC.width,lgC.height);
+  lgMMCtx.strokeStyle='rgba(0,212,255,0.6)'; lgMMCtx.lineWidth=1;
+  lgMMCtx.strokeRect((v0.x-wx0)*ms,(v0.y-wy0)*ms,(v1.x-v0.x)*ms,(v1.y-v0.y)*ms);
+}
+
+function lgOnDown(e){ lgDragging=true; lgDSX=e.clientX; lgDSY=e.clientY; lgDOX=lgOffX; lgDOY=lgOffY; }
+function lgOnMove(e){
+  if(lgDragging){ lgOffX=lgDOX+(e.clientX-lgDSX); lgOffY=lgDOY+(e.clientY-lgDSY); return; }
+  const r=lgC.getBoundingClientRect();
+  const n=lgNodeAt(e.clientX-r.left,e.clientY-r.top);
+  lgHovered=n;
+  const tip=document.getElementById('lgTooltip');
+  if(n){ tip.style.display='block'; tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY-10)+'px'; tip.textContent=`${n.label} · ${n.detail.volume}`; }
+  else { tip.style.display='none'; }
+}
+function lgOnUp(e){
+  if(!lgDragging) return;
+  const dx=Math.abs(e.clientX-lgDSX), dy=Math.abs(e.clientY-lgDSY);
+  lgDragging=false;
+  if(dx<4&&dy<4){
+    const r=lgC.getBoundingClientRect();
+    const n=lgNodeAt(e.clientX-r.left,e.clientY-r.top);
+    if(n){ lgSelected=n; lgOpenPanel(n); } else { lgSelected=null; lgClosePanel(); }
+  }
+}
+function lgOnWheel(e){
+  e.preventDefault();
+  const r=lgC.getBoundingClientRect(), mx=e.clientX-r.left, my=e.clientY-r.top;
+  const f=e.deltaY<0?1.1:0.91, ns=Math.max(0.3,Math.min(3,lgScale*f));
+  lgOffX=mx-(mx-lgOffX)*(ns/lgScale); lgOffY=my-(my-lgOffY)*(ns/lgScale); lgScale=ns;
+}
+function lgZoom(f){
+  const cx=lgC.width/2,cy=lgC.height/2, ns=Math.max(0.3,Math.min(3,lgScale*f));
+  lgOffX=cx-(cx-lgOffX)*(ns/lgScale); lgOffY=cy-(cy-lgOffY)*(ns/lgScale); lgScale=ns;
+}
+function lgReset(){ lgScale=1; lgOffX=40; lgOffY=40; lgSelected=null; lgClosePanel(); }
+
+function lgOpenPanel(n){
+  const col=LG_COLORS[n.layer], d=n.detail;
+  document.getElementById('lgPanelContent').innerHTML=`
+    <div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;padding:3px 10px;border-radius:100px;border:1px solid ${col.border}44;background:${col.bg}55;color:${col.border};display:inline-block;margin-bottom:12px">${n.layer.toUpperCase()}</div>
+    <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:6px;color:#e2e8f0">${n.label}</div>
+    <div style="font-size:0.68rem;color:#64748b;letter-spacing:0.1em;margin-bottom:16px">${d.type}</div>
+    <div style="font-size:0.75rem;line-height:1.75;color:#94a3b8;margin-bottom:20px">${d.desc}</div>
+    <div style="display:flex;flex-direction:column;gap:8px;padding-top:16px;border-top:1px solid #1e2d45">
+      <div style="display:flex;justify-content:space-between;font-size:0.68rem"><span style="color:#64748b">Schema</span><span style="color:#00d4ff;font-size:0.62rem;text-align:right;max-width:180px">${d.schema}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.68rem"><span style="color:#64748b">Volume</span><span style="color:#00d4ff;font-weight:700">${d.volume}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.68rem"><span style="color:#64748b">Latency</span><span style="color:#00d4ff;font-weight:700">${d.latency}</span></div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px">${d.tags.map(t=>`<span class="ptag">${t}</span>`).join('')}</div>
+    ${d.sql?`<div class="panel-sql">${d.sql.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`:''}
+  `;
+  const p=document.getElementById('lgDetailPanel');
+  p.style.transform='translateX(0)'; p.style.pointerEvents='all';
+}
+function lgClosePanel(){
+  const p=document.getElementById('lgDetailPanel');
+  p.style.transform='translateX(360px)'; p.style.pointerEvents='none';
+}
+</script>
+
+<script>
+  // Floating data particles
+  const particleTexts = [
+    'SELECT * FROM transactions', 'WHERE anomaly_score > 0.9',
+    'GROUP BY merchant_id', 'ORDER BY risk_level DESC',
+    'JOIN payment_events', 'PARTITION BY date_trunc',
+    'HAVING COUNT(*) > 100', 'WITH ROLLUP',
+    'CREATE MATERIALIZED VIEW', 'EXPLAIN ANALYZE',
+    'root_cause = NULL', 'data_quality_flag',
+    '{"metric": "latency"}', 'p99 = 4.2ms',
+    'anomaly_detected: true', 'lineage_trace_id',
+    'source_to_target_map', 'blast_radius: 3 tables',
+  ];
+
+  const particlesEl = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.textContent = particleTexts[i % particleTexts.length];
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (15 + Math.random() * 20) + 's';
+    p.style.animationDelay = (Math.random() * 20) + 's';
+    p.style.fontSize = (0.55 + Math.random() * 0.2) + 'rem';
+    particlesEl.appendChild(p);
+  }
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
