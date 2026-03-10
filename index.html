@@ -745,11 +745,15 @@
 
   /* Scroll reveal */
   .reveal {
-    opacity: 0;
-    transform: translateY(32px);
+    opacity: 1;
+    transform: translateY(0);
     transition: opacity 0.7s ease, transform 0.7s ease;
   }
-  .reveal.visible {
+  .reveal.animate-ready {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  .reveal.animate-ready.visible {
     opacity: 1;
     transform: translateY(0);
   }
@@ -776,13 +780,107 @@
   }
 
   @media (max-width: 768px) {
-    nav { padding: 16px 24px; }
-    section { padding: 80px 24px; }
-    .hero { padding: 100px 24px 60px; }
-    .hero-stats { gap: 32px; }
-    .viz-decoration { display: none; }
+
+    /* ── Nav ── */
+    nav { padding: 14px 20px; }
     .nav-links { display: none; }
-    footer { padding: 24px; }
+
+    /* ── Hero ── */
+    .hero { padding: 90px 20px 52px; }
+    .hero-name { font-size: clamp(3rem, 13vw, 4.5rem); }
+    .hero-title {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      line-height: 1.7;
+    }
+    .hero-summary { font-size: 0.8rem; line-height: 1.8; margin-bottom: 36px; }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px 16px;
+      margin-bottom: 36px;
+    }
+    .stat-num { font-size: 1.6rem; }
+    .stat-label { font-size: 0.6rem; }
+    .hero-cta { flex-direction: column; gap: 12px; }
+    .btn { text-align: center; padding: 14px 24px; font-size: 0.72rem; }
+    .viz-decoration { display: none; }
+
+    /* ── Sections ── */
+    section { padding: 64px 20px; }
+    .section-title { margin-bottom: 40px; font-size: 1.5rem; }
+
+    /* ── Skills ── */
+    .skills-grid {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+    .skill-card { padding: 24px 20px; }
+    .skill-name { font-size: 0.9rem; }
+
+    /* ── Timeline ── */
+    .timeline { padding-left: 20px; }
+    .timeline-item { margin-bottom: 48px; }
+    .timeline-item::before { left: -25px; width: 8px; height: 8px; }
+    .timeline-meta { gap: 10px; }
+    .timeline-company { font-size: 1.1rem; }
+    .timeline-period { font-size: 0.65rem; }
+    .timeline-achievements li { font-size: 0.8rem; }
+
+    /* ── Achievements ── */
+    .achievements-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .achievement-card { padding: 22px 16px; }
+    .achievement-num { font-size: 2rem; }
+    .achievement-text { font-size: 0.75rem; }
+
+    /* ── Proof of Work ── */
+    .proof-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .proof-note { max-width: 100%; }
+    .proof-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .proof-card { padding: 32px 24px; min-height: 180px; }
+
+    /* ── Education ── */
+    .edu-grid {
+      grid-template-columns: 1fr !important;
+      gap: 16px;
+    }
+
+    /* ── Contact ── */
+    .contact-section { padding: 64px 20px; }
+    .contact-links {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      margin-top: 32px;
+    }
+    .contact-link {
+      justify-content: center;
+      padding: 14px 20px;
+      font-size: 0.8rem;
+    }
+
+    /* ── Footer ── */
+    footer { padding: 20px; font-size: 0.7rem; }
+  }
+
+  /* ── Extra small phones (≤ 380px) ── */
+  @media (max-width: 380px) {
+    .hero-name { font-size: 2.8rem; }
+    .hero-stats { grid-template-columns: 1fr 1fr; gap: 18px 12px; }
+    .achievements-grid { grid-template-columns: 1fr; }
+    .achievement-num { font-size: 1.8rem; }
+    section { padding: 52px 16px; }
   }
 </style>
 </head>
@@ -1138,8 +1236,8 @@
       Open to data analyst roles in regulatory reporting, fintech, or payment risk. Let's talk about how I can bring clarity to your data.
     </p>
     <div class="contact-links reveal">
-      <a class="contact-link" href="mailto:fiona.j.sylvester@gmail.com">
-        <span>✉</span> <span>fiona.j.sylvester@gmail.com</span>
+      <a class="contact-link" href="/cdn-cgi/l/email-protection#2a4c4345444b0440045953465c4f595e4f586a4d474b434604494547">
+        <span>✉</span> <span><span class="__cf_email__" data-cfemail="badcd3d5d4db94d094c9c3d6ccdfc9cedfc8faddd7dbd3d694d9d5d7">[email&#160;protected]</span></span>
       </a>
       <a class="contact-link" href="https://www.linkedin.com/in/fiona-sylvester-a24499156/" target="_blank">
         <span>in</span> LinkedIn
@@ -1704,7 +1802,7 @@ cohort_analysis <span class="cs-kw">AS</span> (
 
 </div><!-- end caseStudyOverlay -->
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 function openCaseStudy() {
   document.getElementById('caseStudyOverlay').style.display = 'block';
   document.body.style.overflow = 'hidden';
@@ -2161,7 +2259,10 @@ function lgClosePanel(){
       if (entry.isIntersecting) entry.target.classList.add('visible');
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-  revealEls.forEach(el => observer.observe(el));
+  revealEls.forEach(el => {
+    el.classList.add('animate-ready');
+    observer.observe(el);
+  });
 </script>
 </body>
 </html>
