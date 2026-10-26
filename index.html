@@ -8,6 +8,852 @@
 <style>
   :root {
     --bg: #06090f;
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Fiona Sylvester</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: slim sticky bar, big name over a live anomaly monitor you can poke, then quiet hairline-ruled sections with small interactive instruments (tabs, scrubber, lineage map). */
+:root{
+  --bg:#EDF0F4; --surface:#F8FAFC; --ink:#0E1A2B; --muted:#53627A; --line:#CCD4DF;
+  --accent:#2F4BFF; --accent-ink:#FFFFFF; --alert:#D6334A; --warn:#A85A00; --ok:#17825A;
+  --band:rgba(47,75,255,.10);
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A111E; --surface:#111B2D; --ink:#E7ECF5; --muted:#94A2B9; --line:#26344C;
+    --accent:#7F97FF; --accent-ink:#0A111E; --alert:#FF6E82; --warn:#F2A65A; --ok:#4FD1A0;
+    --band:rgba(127,151,255,.15); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A111E; --surface:#111B2D; --ink:#E7ECF5; --muted:#94A2B9; --line:#26344C;
+  --accent:#7F97FF; --accent-ink:#0A111E; --alert:#FF6E82; --warn:#F2A65A; --ok:#4FD1A0;
+  --band:rgba(127,151,255,.15); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1160px;margin-left:auto;margin-right:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.mono{font-family:var(--mono)}
+.eyebrow{font:500 .78rem var(--mono);letter-spacing:.04em;color:var(--muted);margin:0}
+h2{font:650 clamp(1.9rem,4.6vw,3rem)/1.05 var(--display);letter-spacing:-.02em;margin:10px 0 14px;text-wrap:balance;max-width:22ch}
+h3{font:650 1.5rem/1.15 var(--display);letter-spacing:-.01em;margin:0}
+.sub{color:var(--muted);max-width:60ch;margin:0}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;height:56px}
+.brand{font:700 1.15rem var(--display);text-decoration:none;letter-spacing:-.02em;white-space:nowrap}
+.brand span{color:var(--accent)}
+nav{display:flex;gap:2px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none;justify-content:flex-end}
+nav::-webkit-scrollbar{display:none}
+nav a{font:500 .8rem var(--mono);text-decoration:none;color:var(--muted);padding:8px 10px;border-radius:8px;white-space:nowrap}
+nav a:hover{color:var(--ink)}
+nav a.on{color:var(--ink);background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)}
+.theme{flex:none;width:36px;height:36px;border:1px solid var(--line);background:var(--surface);border-radius:8px;display:grid;place-items:center;cursor:pointer}
+.theme:hover{border-color:var(--accent)}
+.theme svg{width:16px;height:16px}
+
+/* hero */
+.hero{padding-top:clamp(32px,6vw,72px);padding-bottom:48px}
+.pill{display:inline-flex;align-items:center;gap:8px;font:500 .78rem var(--mono);color:var(--muted);margin:0 0 20px}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 var(--ok);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 50%,transparent)}70%,100%{box-shadow:0 0 0 9px transparent}}
+h1{font:700 clamp(3rem,10.5vw,7.6rem)/.92 var(--display);letter-spacing:-.035em;margin:0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--accent)}
+.hero-top{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:32px;align-items:end}
+.role{font:500 .95rem var(--mono);color:var(--muted);margin:22px 0 0}
+.lede{font-size:1.06rem;color:var(--muted);margin:0 0 6px;max-width:48ch}
+.lede strong{color:var(--ink);font-weight:600}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.btn{font:500 .84rem var(--mono);padding:9px 13px;border:1px solid var(--line);background:transparent;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+
+/* monitor */
+.monitor{margin:40px 0 0;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mon-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;padding:12px 16px;border-bottom:1px solid var(--line);align-items:center}
+.mon-title{font:500 .82rem var(--mono)}
+.mon-title small{color:var(--muted);font-weight:400;margin-left:8px}
+.chip{font:500 .74rem var(--mono);padding:3px 9px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.chip.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.chip.alert{color:var(--alert);background:color-mix(in srgb,var(--alert) 14%,transparent)}
+.chip.warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.chip.acc{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+canvas{display:block;width:100%;height:clamp(230px,34vw,320px);touch-action:pan-y}
+.mon-ctrl{display:flex;flex-wrap:wrap;gap:10px 12px;padding:12px 16px;border-top:1px solid var(--line);align-items:center}
+.mon-ctrl .sens{display:flex;align-items:center;gap:10px;font:500 .8rem var(--mono);margin-left:auto;flex-wrap:wrap}
+.sens output{min-width:3.4em;color:var(--accent)}
+input[type=range]{accent-color:var(--accent);width:130px}
+.readout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0;border-top:1px solid var(--line)}
+.readout div{padding:12px 16px;border-right:1px solid var(--line);min-width:0}
+.readout div:last-child{border-right:0}
+.readout dt{font:500 .72rem var(--mono);color:var(--muted);letter-spacing:.04em}
+.readout dd{margin:2px 0 0;font:600 1.15rem var(--display);font-variant-numeric:tabular-nums}
+.readout dd.small{font:400 .82rem/1.35 var(--body);color:var(--muted)}
+.cap{font-size:.86rem;color:var(--muted);margin:12px 2px 0;max-width:70ch}
+
+/* sections */
+.band{border-top:1px solid var(--line)}
+.sec{padding-top:72px;padding-bottom:72px}
+
+/* skills */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 20px}
+.fchip{font:500 .8rem var(--mono);padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:transparent;cursor:pointer}
+.fchip:hover{border-color:var(--accent)}
+.fchip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.skills{display:flex;flex-wrap:wrap;gap:8px}
+.skill{font:500 .86rem var(--mono);padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);transition:opacity .2s,border-color .2s}
+.skill.on{border-color:var(--accent)}
+.skill.dim{opacity:.22}
+
+/* experience */
+.gantt{margin:30px 0 0}
+.axis{position:relative;height:20px;border-bottom:1px solid var(--line);font:400 .7rem var(--mono);color:var(--muted)}
+.axis span{position:absolute;bottom:2px;transform:translateX(-50%)}
+.row{position:relative;height:40px;margin-top:8px}
+.bar{position:absolute;top:0;height:40px;border-radius:6px;display:flex;align-items:center;padding:0 9px;font:500 .76rem var(--mono);overflow:hidden;white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.bar:hover{border-color:var(--accent)}
+.bar[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.bar.study{background:transparent;border-style:dashed;color:var(--muted);cursor:default}
+.legend{font:400 .74rem var(--mono);color:var(--muted);margin:10px 0 0}
+.panel{margin-top:30px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:28px 40px}
+.panel .meta{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.panel .meta p{margin:0;color:var(--muted);font-size:.95rem}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.tag{font:500 .74rem var(--mono);padding:3px 8px;border:1px solid var(--line);border-radius:6px;color:var(--muted)}
+.panel ul{list-style:none;margin:0;padding:0;min-width:0}
+.panel li{padding:14px 0;border-top:1px solid var(--line)}
+.panel li:first-child{border-top:0;padding-top:0}
+.clients{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+.clients p{margin:0 0 10px}
+
+/* impact */
+.impact{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 56px;margin-top:30px}
+.stat{display:grid;grid-template-columns:minmax(130px,auto) minmax(0,1fr);gap:20px;padding:24px 0;border-top:1px solid var(--line);align-items:baseline}
+.stat b{font:700 clamp(2.4rem,5vw,3.4rem)/1 var(--display);letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--accent)}
+.stat p{margin:0;color:var(--muted);font-size:.95rem}
+
+/* case study */
+.case{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:28px 40px;margin-top:30px;align-items:start}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.step{width:100%;text-align:left;display:grid;grid-template-columns:86px minmax(0,1fr);gap:10px;align-items:baseline;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer}
+.step:hover{border-color:var(--accent)}
+.step .t{font:500 .78rem var(--mono);color:var(--muted)}
+.step .n{font-weight:600}
+.step[aria-pressed="true"]{background:var(--surface);border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.step[aria-pressed="true"] .t{color:var(--accent)}
+.detail{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;min-width:0}
+.detail .when{font:500 .78rem var(--mono);color:var(--accent);margin:0 0 6px}
+.detail p{margin:10px 0 0;color:var(--muted)}
+.sigs{list-style:none;margin:18px 0 0;padding:0}
+.sigs li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 0;border-top:1px solid var(--line);align-items:center}
+.sigs .src{grid-column:1/-1;font:400 .74rem var(--mono);color:var(--muted)}
+.sigs .none{color:var(--muted);display:block}
+.meter{display:flex;gap:4px;margin-top:20px}
+.meter i{flex:1;height:8px;border-radius:3px;background:var(--line)}
+.meter i.on{background:var(--accent)}
+.meter-l{font:400 .76rem var(--mono);color:var(--muted);margin:8px 0 0}
+.verdict{margin-top:18px;padding:14px;border-radius:10px;border:1px solid var(--line);font-size:.92rem}
+.verdict.block{border-color:var(--alert);background:color-mix(in srgb,var(--alert) 9%,transparent)}
+.verdict.late{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 9%,transparent)}
+.verdict b{font-weight:600}
+pre{margin:10px 0 0;padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);font:400 .76rem/1.5 var(--mono);overflow-x:auto;white-space:pre}
+
+/* lineage */
+.mapwrap{margin-top:30px;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow-x:auto}
+.mapwrap svg{display:block;width:100%;min-width:760px;height:auto}
+.edge{fill:none;stroke:var(--line);stroke-width:1.5;transition:opacity .2s,stroke .2s}
+.edge.on{stroke:var(--accent);stroke-width:2}
+.edge.dim{opacity:.25}
+.node{cursor:pointer;transition:opacity .2s}
+.node rect{fill:var(--bg);stroke:var(--line);stroke-width:1.2;rx:8}
+.node text{fill:var(--ink);font:500 11px var(--mono);text-anchor:middle;pointer-events:none}
+.node.dim{opacity:.3}
+.node.rel rect{stroke:var(--accent)}
+.node.sel rect{stroke:var(--accent);stroke-width:2;fill:color-mix(in srgb,var(--accent) 14%,var(--bg))}
+.node:focus-visible rect{stroke:var(--accent);stroke-width:2.5}
+.lbl{fill:var(--muted);font:500 10px var(--mono);letter-spacing:.08em;text-anchor:middle}
+.mapdetail{margin-top:14px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:8px 32px;padding:18px 2px}
+.mapdetail h3{font-size:1.2rem}
+.mapdetail p{margin:0;color:var(--muted)}
+.facts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;margin:22px 0 0;border-top:1px solid var(--line)}
+.facts div{padding:14px 12px 0 0}
+.facts dt{font:500 .72rem var(--mono);color:var(--muted)}
+.facts dd{margin:2px 0 0;font:650 1.3rem var(--display);font-variant-numeric:tabular-nums}
+.note{font-size:.84rem;color:var(--muted);margin:14px 0 0}
+
+/* writing */
+.post{display:flex;flex-direction:column;gap:12px;align-items:flex-start;max-width:760px;margin-top:28px;padding:24px;background:var(--surface);border:1px solid var(--line);border-radius:12px;text-decoration:none;transition:border-color .2s}
+.post:hover{border-color:var(--accent)}
+.post h3{font-size:clamp(1.3rem,3vw,1.8rem);text-wrap:balance}
+.post p{margin:0;color:var(--muted);max-width:62ch}
+.post .go{font-size:.82rem;color:var(--accent)}
+
+/* education + contact */
+.edu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:30px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px}
+.card h3{font-size:1.2rem}
+.card p{margin:6px 0 0;color:var(--muted);font-size:.94rem}
+.card .grade{font:600 1.1rem var(--display);color:var(--ink);margin-top:12px}
+.extras{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.contact-list{margin-top:28px;max-width:680px}
+.crow{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.crow:last-child{border-bottom:1px solid var(--line)}
+.crow .k{font:500 .76rem var(--mono);color:var(--muted)}
+.crow .v{font-weight:500;overflow-wrap:anywhere}
+.crow .btn{padding:6px 10px;font-size:.78rem}
+footer{border-top:1px solid var(--line)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;padding-top:24px;padding-bottom:32px;font:400 .78rem var(--mono);color:var(--muted)}
+
+@media (max-width:860px){
+  .hero-top,.panel,.case,.mapdetail{grid-template-columns:minmax(0,1fr)}
+  .impact{grid-template-columns:minmax(0,1fr)}
+  .edu{grid-template-columns:minmax(0,1fr)}
+  .facts{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .sec{padding-top:56px;padding-bottom:56px}
+  .brand{display:none}
+  nav{justify-content:flex-start}
+}
+@media (max-width:520px){
+  .readout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .readout div:nth-child(2){border-right:0}
+  .readout div:nth-child(3){grid-column:1/-1;border-top:1px solid var(--line)}
+  .mon-ctrl .sens{margin-left:0}
+  .stat{grid-template-columns:minmax(0,1fr);gap:6px}
+  .crow{grid-template-columns:minmax(0,1fr) auto}
+  .crow .k{grid-column:1/-1}
+  .step{grid-template-columns:minmax(0,1fr)}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .pill i{animation:none}
+  *{transition:none!important}
+}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">FS<span>_</span></a>
+    <nav id="nav" aria-label="Sections">
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="#impact">Impact</a>
+      <a href="#case">Case study</a>
+      <a href="#lineage">Lineage</a>
+      <a href="#writing">Writing</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark theme" title="Switch theme">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.8a6.2 6.2 0 0 1 0 12.4z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="wrap hero">
+    <p class="pill"><i></i>Available for opportunities · Bangalore, India</p>
+    <div class="hero-top">
+      <div>
+        <h1>Fiona <em>Sylvester</em></h1>
+        <p class="role">Data Analyst · Financial Systems · Payment Risk Analytics</p>
+      </div>
+      <div>
+        <p class="lede"><strong>Turning raw transactional noise into signal.</strong> 6+ years in high-volume fintech data, from anomaly detection in critical banking systems to root cause analysis that prevented $400K+ in fraud losses. I speak fluent SQL, think in data lineage, and translate technical findings into decisions that matter.</p>
+        <div class="cta">
+          <a class="btn primary" href="#experience">View experience</a>
+          <a class="btn" href="#contact">Get in touch</a>
+        </div>
+      </div>
+    </div>
+
+    <figure class="monitor" id="monitor">
+      <div class="mon-head">
+        <span class="mon-title">payments_success_rate<small>simulated metric</small></span>
+        <span class="chip ok" id="status">Within baseline</span>
+      </div>
+      <canvas id="mon" role="img" aria-label="Live line chart of a simulated payment metric with a rolling baseline band. Points outside the band are flagged as anomalies."></canvas>
+      <div class="mon-ctrl">
+        <button class="btn primary" id="btnSpike" type="button">Inject spike</button>
+        <button class="btn" id="btnShift" type="button">Shift baseline</button>
+        <button class="btn" id="btnPause" type="button">Pause</button>
+        <label class="sens" for="sens">Threshold <input id="sens" type="range" min="2" max="5" step="0.5" value="3"><output id="sensOut" for="sens">3.0σ</output></label>
+      </div>
+      <dl class="readout">
+        <div><dt>LATEST z-SCORE</dt><dd id="zOut">0.0</dd></div>
+        <div><dt>FLAGGED IN VIEW</dt><dd id="flOut">0</dd></div>
+        <div><dt>BASELINE</dt><dd class="small">Rolling 60 samples, flagged points masked out</dd></div>
+      </dl>
+    </figure>
+    <p class="cap">Simulated stream. Try a spike, then a baseline shift, then drop the threshold to 2σ and watch the false alarms arrive. The same logic runs in plain SQL over 300+ live metrics for banking clients.</p>
+  </section>
+
+  <section class="band" id="skills">
+    <div class="wrap sec">
+      <p class="eyebrow">-- core competencies</p>
+      <h2>Fluent in the whole data path</h2>
+      <p class="sub">From the query to the dashboard to the stakeholder conversation. Pick a lane to light up its skills.</p>
+      <div class="filters" id="filters" role="group" aria-label="Filter skills by area"></div>
+      <div class="skills" id="skills-list"></div>
+    </div>
+  </section>
+
+  <section class="band" id="experience">
+    <div class="wrap sec">
+      <p class="eyebrow">-- career history</p>
+      <h2>Professional experience</h2>
+      <p class="sub">Select a role on the timeline to read what I did there.</p>
+
+      <div class="gantt">
+        <div class="axis" id="axis"></div>
+        <div class="row" role="tablist" aria-label="Roles">
+          <button class="bar" role="tab" id="tab-paypal" aria-controls="p-paypal" aria-selected="false" data-panel="p-paypal" data-start="2019.0" data-end="2021.67" type="button">PayPal</button>
+          <button class="bar" role="tab" id="tab-vunet" aria-controls="p-vunet" aria-selected="true" data-panel="p-vunet" data-start="2022.58" data-end="2026.82" type="button">Vunet Systems</button>
+        </div>
+        <div class="row" aria-hidden="true">
+          <div class="bar study" data-start="2021.67" data-end="2023.42" title="M.Tech, Sept 2021 to May 2023">M.Tech</div>
+        </div>
+        <p class="legend">Dashed bar is the M.Tech in AI &amp; ML, studied alongside the first months at Vunet.</p>
+      </div>
+
+      <div class="panel" id="p-vunet" role="tabpanel" aria-labelledby="tab-vunet">
+        <div class="meta">
+          <h3>Senior Data Scientist</h3>
+          <p class="mono">Vunet Systems Pvt Ltd<br>Aug 2022 to Present · Bengaluru</p>
+          <div class="tags"><span class="tag">ClickHouse</span><span class="tag">Grafana</span><span class="tag">PostgreSQL</span><span class="tag">Airflow</span><span class="tag">Kubernetes</span></div>
+          <span class="chip acc">Outstanding Achiever Award</span>
+        </div>
+        <div>
+          <ul>
+            <li>Built a SQL-native anomaly detection system in ClickHouse, monitoring 300+ metrics in production across multiple Indian banks. STL decomposition and time series classification separate genuine risk signals from expected variation.</li>
+            <li>Architected a reusable, metadata-driven dashboard framework across ClickHouse and Grafana, cutting client-specific development time by 80%.</li>
+            <li>Led the migration from ELK to ClickHouse on Kubernetes, delivering 2× query performance with zero regression in data integrity.</li>
+            <li>Directed a validation and reconciliation program across fragmented financial reporting systems, resolving logic-level discrepancies that schema-level checks miss.</li>
+            <li>Built automated pipelines (PostgreSQL, Apache Airflow) that consolidate 10+ source systems into hourly, daily and weekly rollups, accurate across 50K+ daily transactions.</li>
+            <li>Run root cause analysis on client-reported anomalies, tracing lineage through complex SQL, and maintain source-to-target mappings across 300+ dimensions.</li>
+          </ul>
+          <div class="clients">
+            <p class="eyebrow">-- clients served</p>
+            <div class="tags"><span class="tag">State Bank of India</span><span class="tag">ICICI Bank</span><span class="tag">Karnataka Bank</span><span class="tag">UCO Bank</span><span class="tag">Union Bank of India</span><span class="tag">Sahamati</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="p-paypal" role="tabpanel" aria-labelledby="tab-paypal" hidden>
+        <div class="meta">
+          <h3>Risk Operations Agent II</h3>
+          <p class="mono">PayPal India Pvt Ltd<br>Jan 2019 to Sep 2021 · Bengaluru</p>
+          <div class="tags"><span class="tag">SQL</span><span class="tag">Detection rules</span><span class="tag">Impact analysis</span></div>
+          <span class="chip acc">PayPal Spot Award</span>
+        </div>
+        <div>
+          <ul>
+            <li>Investigated fraud patterns and account-level risk indicators across high-volume transaction data, building custom SQL detection rules for a global fintech platform.</li>
+            <li>Reduced repeat fraud by 15–20% and cut false positives by 22% through data-driven rule design and impact analysis across customer segments and merchant categories.</li>
+            <li>Prevented $400K+ in financial losses by escalating high-value suspicious activity early.</li>
+            <li>Resolved 90+ daily high-risk alerts at 98%+ QA in an SLA-driven environment, earning a promotion within 6 months.</li>
+            <li>Won the Spot Award for cross-functional collaboration between operations and technology.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="impact">
+    <div class="wrap sec">
+      <p class="eyebrow">-- key achievements</p>
+      <h2>Numbers that held up in production</h2>
+      <div class="impact">
+        <div class="stat"><b data-count="300" data-suffix="+">300+</b><p>Metrics tracked by the anomaly detection system running across Indian banking clients.</p></div>
+        <div class="stat"><b data-count="22" data-suffix="%">22%</b><p>Drop in fraud-related false positives at PayPal through SQL-driven impact analysis.</p></div>
+        <div class="stat"><b data-count="400" data-prefix="$" data-suffix="K+">$400K+</b><p>Fraud losses prevented by investigating and escalating high-value suspicious activity.</p></div>
+        <div class="stat"><b data-count="2" data-suffix="×">2×</b><p>Query performance gain from the ELK to ClickHouse migration, with zero reporting regression.</p></div>
+        <div class="stat"><b data-count="80" data-suffix="%">80%</b><p>Less client onboarding time thanks to a reusable, mapping-driven dashboard architecture.</p></div>
+        <div class="stat"><b data-count="8.8" data-decimals="1">8.8</b><p>CGPA on the M.Tech in AI &amp; Machine Learning at Manipal Institute of Technology.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="case">
+    <div class="wrap sec">
+      <p class="eyebrow">-- case study · fraud detection</p>
+      <h2>Anatomy of an account takeover</h2>
+      <p class="sub">An ATO is a chain, and every link leaves a data signature. Step through the timeline to see which signals fire and where a rule can stop the money.</p>
+      <div class="case">
+        <ol class="steps" id="steps"></ol>
+        <div class="detail" id="detail" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="lineage">
+    <div class="wrap sec">
+      <p class="eyebrow">-- data lineage</p>
+      <h2>From source table to alert</h2>
+      <p class="sub">A payment analytics pipeline in six layers. Select any node to trace everything upstream and downstream of it.</p>
+      <div class="mapwrap"><svg id="map" viewBox="0 0 912 340" role="group" aria-label="Data lineage map with six layers"></svg></div>
+      <div class="mapdetail" id="mapdetail" aria-live="polite"></div>
+      <dl class="facts">
+        <div><dt>SOURCE TABLES</dt><dd>12</dd></div>
+        <div><dt>DAILY TRANSACTIONS</dt><dd>50K+</dd></div>
+        <div><dt>KPI METRICS</dt><dd>300+</dd></div>
+        <div><dt>PIPELINE LAYERS</dt><dd>6</dd></div>
+        <div><dt>QUERY LATENCY</dt><dd>&lt;50ms</dd></div>
+        <div><dt>VS ELK</dt><dd>2×</dd></div>
+      </dl>
+      <p class="note">Simplified illustration. The counts are real, the node names are generalized.</p>
+    </div>
+  </section>
+
+  <section class="band" id="writing">
+    <div class="wrap sec">
+      <p class="eyebrow">-- writing</p>
+      <h2>Notes from the work</h2>
+      <a class="post" href="https://medium.com/@fiona.j.sylvester/wait-you-can-do-anomaly-detection-directly-inside-a-database-ba6ec8dceb8c" target="_blank" rel="noopener">
+        <span class="chip acc">Medium · March 2026</span>
+        <h3>Wait, You Can Do Anomaly Detection Directly Inside a Database?</h3>
+        <p>Real-time anomaly detection for payment metrics, run entirely inside ClickHouse. It covers cleaning the time series by filling gaps and excluding past outliers, then flagging unusual values with seasonal residuals and Tukey-based outlier detection. No ML framework needed.</p>
+        <span class="mono go">Read the article ↗</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="band" id="education">
+    <div class="wrap sec">
+      <p class="eyebrow">-- academic background</p>
+      <h2>Education and credentials</h2>
+      <div class="edu">
+        <div class="card">
+          <h3>M.Tech, Artificial Intelligence &amp; Machine Learning</h3>
+          <p>Manipal Institute of Technology<br><span class="mono">Sept 2021 to May 2023</span></p>
+          <div class="grade">CGPA 8.8 / 10</div>
+        </div>
+        <div class="card">
+          <h3>B.Tech, Information Science</h3>
+          <p>Oxford College of Engineering<br><span class="mono">Aug 2014 to May 2018</span></p>
+          <div class="grade">74%</div>
+        </div>
+      </div>
+      <div class="extras">
+        <span class="chip warn">Certified Fraud Examiner (CFE), in progress, expected Nov 2026</span>
+        <span class="chip acc">PayPal Spot Award</span>
+        <span class="chip acc">Outstanding Achiever Award, Vunet Systems</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="contact">
+    <div class="wrap sec">
+      <p class="eyebrow">-- get in touch</p>
+      <h2>Let's connect</h2>
+      <p class="sub">Open to data analyst roles in regulatory reporting, fintech, or payment risk. Let's talk about how I can bring clarity to your data.</p>
+      <div class="contact-list">
+        <div class="crow"><span class="k">EMAIL</span><span class="v" id="c-email">fiona.j.sylvester@gmail.com</span><button class="btn" type="button" data-copy="c-email">Copy</button></div>
+        <div class="crow"><span class="k">PHONE</span><span class="v" id="c-phone">+91 8095179762</span><button class="btn" type="button" data-copy="c-phone">Copy</button></div>
+        <div class="crow"><span class="k">LINKEDIN</span><span class="v">linkedin.com/in/FionaSylvester</span><a class="btn" href="https://www.linkedin.com/in/FionaSylvester" target="_blank" rel="noopener">Open</a></div>
+        <div class="crow"><span class="k">BASED IN</span><span class="v">Bangalore, India</span><span></span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap"><span>Fiona Jothi Sylvester</span><span>Data Analyst · Fraud &amp; Risk Analytics · Regulatory Reporting</span><span>© 2026</span></div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+var root=document.documentElement;
+function $(s,c){return (c||document).querySelector(s)}
+function $$(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))}
+var reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- theme ---------- */
+try{var st=localStorage.getItem("fs-theme");if(st==="light"||st==="dark")root.setAttribute("data-theme",st)}catch(e){}
+function effective(){var t=root.getAttribute("data-theme");if(t)return t;return matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}
+$("#theme").addEventListener("click",function(){
+  var n=effective()==="dark"?"light":"dark";
+  root.setAttribute("data-theme",n);
+  try{localStorage.setItem("fs-theme",n)}catch(e){}
+});
+
+/* ---------- anomaly monitor ---------- */
+var cv=$("#mon"),ctx=cv.getContext("2d");
+var N=120,W=60,k=3,t=0,lvl=0,lvlTarget=0,spikeQ=0,spikeSign=1,spikeAmt=26,hov=-1;
+var v=[],m=[],s=[],f=[],mask=[],kk=[],z=[];
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
+var rnd=mulberry32(11);
+function gauss(){var u=0,w=0;while(!u)u=rnd();while(!w)w=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*w)}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+function nextValue(){
+  t++;
+  lvl+=(lvlTarget-lvl)*0.5;
+  var x=48+lvl+4*Math.sin(t/11)+2*Math.sin(t/3.7)+gauss()*1.8;
+  if(spikeQ>0){x+=spikeSign*spikeAmt;spikeQ--}
+  return clamp(x,1,99);
+}
+function step(){
+  var x=nextValue(),n=v.length,i,run=0;
+  for(i=n-1;i>=0&&mask[i];i--)run++;
+  if(run>=12){for(i=n-12;i<n;i++)mask[i]=false}
+  var pool=[];
+  for(i=Math.max(0,n-W);i<n;i++)if(!mask[i])pool.push(v[i]);
+  if(pool.length<10){pool=v.slice(Math.max(0,n-W))}
+  var mean=0,sd=0;
+  if(pool.length){
+    for(i=0;i<pool.length;i++)mean+=pool[i];
+    mean/=pool.length;
+    for(i=0;i<pool.length;i++)sd+=(pool[i]-mean)*(pool[i]-mean);
+    sd=Math.sqrt(sd/pool.length);
+  }else{mean=x}
+  sd=Math.max(sd,1.6);
+  var zz=(x-mean)/sd,fl=Math.abs(zz)>k;
+  v.push(x);m.push(mean);s.push(sd);f.push(fl);mask.push(fl);kk.push(k);z.push(zz);
+  if(v.length>N){v.shift();m.shift();s.shift();f.shift();mask.shift();kk.shift();z.shift()}
+}
+var prefillSpikes={70:1,125:1};
+for(var pi=0;pi<180;pi++){
+  if(prefillSpikes[pi]){spikeQ=1;spikeSign=1;spikeAmt=27}
+  step();
+}
+var running=!reduce,inView=true;
+
+function draw(){
+  var cs=getComputedStyle(root);
+  var C=function(n){return cs.getPropertyValue(n).trim()};
+  var w=cv.clientWidth,h=cv.clientHeight;
+  if(!w||!h)return;
+  var dpr=Math.min(window.devicePixelRatio||1,2);
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  var mono=C("--mono");
+  var L=36,R=14,T=16,B=24,pw=w-L-R,ph=h-T-B;
+  function X(i){return L+pw*(i/(N-1))}
+  function Y(val){return T+ph*(1-val/100)}
+  var n=v.length,off=N-n; // right-align if fewer points
+  ctx.font="11px "+mono;ctx.textBaseline="middle";
+  var g,gv=[0,25,50,75,100];
+  for(g=0;g<gv.length;g++){
+    var gy=Y(gv[g]);
+    ctx.strokeStyle=C("--line");ctx.globalAlpha=.7;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(L,gy+.5);ctx.lineTo(w-R,gy+.5);ctx.stroke();ctx.globalAlpha=1;
+    ctx.fillStyle=C("--muted");ctx.textAlign="right";ctx.fillText(String(gv[g]),L-8,gy);
+  }
+  ctx.textAlign="left";ctx.textBaseline="alphabetic";
+  ctx.fillText("last "+N+" samples",L,h-6);
+  ctx.textAlign="right";ctx.fillText("now",w-R,h-6);
+  var i;
+  /* band */
+  ctx.beginPath();
+  for(i=0;i<n;i++){var yt=Y(Math.min(100,m[i]+kk[i]*s[i]));if(i===0)ctx.moveTo(X(i+off),yt);else ctx.lineTo(X(i+off),yt)}
+  for(i=n-1;i>=0;i--){ctx.lineTo(X(i+off),Y(Math.max(0,m[i]-kk[i]*s[i])))}
+  ctx.closePath();ctx.fillStyle=C("--band");ctx.fill();
+  /* band edges */
+  ctx.strokeStyle=C("--accent");ctx.globalAlpha=.45;ctx.setLineDash([4,4]);ctx.lineWidth=1;
+  ctx.beginPath();for(i=0;i<n;i++){var a1=Y(Math.min(100,m[i]+kk[i]*s[i]));if(i===0)ctx.moveTo(X(i+off),a1);else ctx.lineTo(X(i+off),a1)}ctx.stroke();
+  ctx.beginPath();for(i=0;i<n;i++){var a2=Y(Math.max(0,m[i]-kk[i]*s[i]));if(i===0)ctx.moveTo(X(i+off),a2);else ctx.lineTo(X(i+off),a2)}ctx.stroke();
+  ctx.setLineDash([]);ctx.globalAlpha=1;
+  /* series */
+  ctx.beginPath();ctx.strokeStyle=C("--accent");ctx.lineWidth=1.7;ctx.lineJoin="round";
+  for(i=0;i<n;i++){if(i===0)ctx.moveTo(X(i+off),Y(v[i]));else ctx.lineTo(X(i+off),Y(v[i]))}
+  ctx.stroke();
+  /* flagged points */
+  var alert=C("--alert");
+  for(i=0;i<n;i++){
+    if(!f[i])continue;
+    var px=X(i+off),py=Y(v[i]);
+    ctx.fillStyle=alert;ctx.beginPath();ctx.arc(px,py,4.5,0,6.2832);ctx.fill();
+    ctx.strokeStyle=alert;ctx.globalAlpha=.35;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px,py,9,0,6.2832);ctx.stroke();ctx.globalAlpha=1;
+    if(i===0||!f[i-1]){
+      var lab=(z[i]>=0?"+":"")+z[i].toFixed(1)+"σ";
+      ctx.font="500 11px "+mono;ctx.fillStyle=alert;
+      ctx.textAlign=px>w-60?"right":"left";
+      ctx.fillText(lab,px+(px>w-60?-10:10),Math.max(T+8,py-8));
+    }
+  }
+  /* endpoint */
+  if(n){
+    var ex=X(n-1+off),ey=Y(v[n-1]),ec=f[n-1]?alert:C("--accent");
+    ctx.fillStyle=ec;ctx.beginPath();ctx.arc(ex,ey,4,0,6.2832);ctx.fill();
+    ctx.strokeStyle=ec;ctx.globalAlpha=.3;ctx.lineWidth=2;ctx.beginPath();ctx.arc(ex,ey,8,0,6.2832);ctx.stroke();ctx.globalAlpha=1;
+  }
+  /* hover */
+  if(hov>=0&&hov<n){
+    var hx=X(hov+off),hy=Y(v[hov]);
+    ctx.strokeStyle=C("--muted");ctx.globalAlpha=.6;ctx.lineWidth=1;ctx.setLineDash([2,3]);
+    ctx.beginPath();ctx.moveTo(hx+.5,T);ctx.lineTo(hx+.5,h-B);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+    var tx=v[hov].toFixed(1)+"   z "+(z[hov]>=0?"+":"")+z[hov].toFixed(1)+(f[hov]?"   flagged":"");
+    ctx.font="500 11px "+mono;
+    var tw=ctx.measureText(tx).width+16,bx=hx+12>w-R-tw?hx-12-tw:hx+12,by=Math.max(T,Math.min(h-B-24,hy-12));
+    ctx.fillStyle=C("--surface");ctx.strokeStyle=C("--line");ctx.lineWidth=1;
+    ctx.fillRect(bx,by,tw,24);ctx.strokeRect(bx+.5,by+.5,tw,24);
+    ctx.fillStyle=f[hov]?alert:C("--ink");ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(tx,bx+8,by+12);
+  }
+  readouts();
+}
+function readouts(){
+  var n=v.length,c=0,i;
+  for(i=0;i<n;i++)if(f[i])c++;
+  $("#zOut").textContent=(z[n-1]>=0?"+":"")+z[n-1].toFixed(1);
+  $("#flOut").textContent=String(c);
+  var st=$("#status"),last=f[n-1];
+  st.textContent=last?"Anomaly flagged":"Within baseline";
+  st.className="chip "+(last?"alert":"ok");
+}
+function tick(){if(running&&inView&&!document.hidden){step();draw()}}
+setInterval(tick,150);
+if("IntersectionObserver" in window){new IntersectionObserver(function(e){inView=e[0].isIntersecting;if(inView)draw()},{threshold:0}).observe($("#monitor"))}
+if("ResizeObserver" in window){new ResizeObserver(function(){draw()}).observe(cv)}else{window.addEventListener("resize",draw)}
+new MutationObserver(draw).observe(root,{attributes:true,attributeFilter:["data-theme"]});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",draw);
+function setPause(){$("#btnPause").textContent=running?"Pause":"Play"}
+$("#btnSpike").addEventListener("click",function(){
+  spikeQ=1;spikeSign=rnd()>.35?1:-1;spikeAmt=22+rnd()*8;
+  if(!running){step()}
+  draw();
+});
+$("#btnShift").addEventListener("click",function(){
+  lvlTarget=lvlTarget?0:14;
+  if(!running){for(var q=0;q<16;q++)step()}
+  draw();
+});
+$("#btnPause").addEventListener("click",function(){running=!running;setPause();draw()});
+$("#sens").addEventListener("input",function(e){k=parseFloat(e.target.value);$("#sensOut").textContent=k.toFixed(1)+"σ"});
+cv.addEventListener("pointermove",function(e){
+  var r=cv.getBoundingClientRect(),L=36,R=14,pw=r.width-L-R,n=v.length,off=N-n;
+  var idx=Math.round((e.clientX-r.left-L)/pw*(N-1))-off;
+  hov=idx>=0&&idx<n?idx:-1;
+  if(!running)draw();
+});
+cv.addEventListener("pointerleave",function(){hov=-1;if(!running)draw()});
+setPause();draw();
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(draw)}
+
+/* ---------- skills ---------- */
+var CATS=[["data","Data & databases"],["analytics","Analytics & investigation"],["bi","BI & visualization"],["eng","Engineering & ops"],["ml","AI & ML"],["biz","Business & collaboration"]];
+var SK=[
+["Advanced SQL","data"],["ClickHouse","data"],["PostgreSQL","data"],["TimescaleDB","data"],["Stored procedures","data"],["Materialized views","data"],["Schema design","data"],
+["Anomaly detection","analytics"],["Root cause analysis","analytics"],["Data lineage","analytics"],["Source-to-target mapping","analytics"],["Change impact analysis","analytics"],["Financial data reconciliation","analytics"],["Fraud & risk analytics","analytics"],
+["Grafana","bi"],["Kibana","bi"],["ELK stack","bi"],["Tableau","bi"],["Power BI","bi"],["Dashboard design","bi"],["Data storytelling","bi"],["MS Office (Excel, PowerPoint, Word)","bi"],
+["Python","eng"],["Apache Airflow","eng"],["Kubernetes","eng"],["Git","eng"],["Data pipelines","eng"],
+["Machine learning","ml"],["Predictive modeling","ml"],["Statistical analysis","ml"],["STL decomposition","ml"],["Applied generative AI (Claude)","ml"],
+["Stakeholder partnership","biz"],["Agile project coordination","biz"],["SLA-driven delivery","biz"],["Tech-to-business translation","biz"],["Mentorship","biz"]
+];
+var fbox=$("#filters"),sbox=$("#skills-list"),active="all";
+function chipBtn(key,label){
+  var b=document.createElement("button");b.type="button";b.className="fchip";b.textContent=label;b.setAttribute("aria-pressed",key===active?"true":"false");b.dataset.key=key;
+  b.addEventListener("click",function(){active=(active===key&&key!=="all")?"all":key;applyFilter()});
+  fbox.appendChild(b);
+}
+chipBtn("all","All");
+CATS.forEach(function(c){chipBtn(c[0],c[1])});
+SK.forEach(function(x){var e=document.createElement("span");e.className="skill";e.textContent=x[0];e.dataset.cat=x[1];sbox.appendChild(e)});
+function applyFilter(){
+  $$(".fchip",fbox).forEach(function(b){b.setAttribute("aria-pressed",b.dataset.key===active?"true":"false")});
+  $$(".skill",sbox).forEach(function(e){
+    e.classList.remove("on","dim");
+    if(active!=="all"){e.classList.add(e.dataset.cat===active?"on":"dim")}
+  });
+}
+
+/* ---------- experience timeline ---------- */
+var Y0=2018,Y1=2027,span=Y1-Y0;
+var axis=$("#axis");
+for(var yy=Y0;yy<Y1;yy++){var sp=document.createElement("span");sp.style.left=((yy-Y0)/span*100)+"%";sp.textContent="’"+String(yy).slice(2);axis.appendChild(sp)}
+$$(".bar[data-start]").forEach(function(b){
+  var a=parseFloat(b.dataset.start),e=parseFloat(b.dataset.end);
+  b.style.left=((a-Y0)/span*100)+"%";b.style.width=((e-a)/span*100)+"%";
+});
+var tabs=$$(".bar[data-panel]");
+tabs.forEach(function(b){
+  b.addEventListener("click",function(){
+    tabs.forEach(function(o){
+      var on=o===b;o.setAttribute("aria-selected",on?"true":"false");
+      $("#"+o.dataset.panel).hidden=!on;
+    });
+  });
+});
+
+/* ---------- count-up ---------- */
+var counters=$$("[data-count]");
+function fmt(el,val){
+  var d=parseInt(el.dataset.decimals||"0",10);
+  el.textContent=(el.dataset.prefix||"")+val.toFixed(d)+(el.dataset.suffix||"");
+}
+if("IntersectionObserver" in window&&!reduce){
+  var co=new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(!en.isIntersecting)return;
+      co.unobserve(en.target);
+      var el=en.target,target=parseFloat(el.dataset.count),t0=performance.now(),dur=900;
+      (function frame(now){
+        var p=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-p,3);
+        fmt(el,target*e);
+        if(p<1)requestAnimationFrame(frame);else fmt(el,target);
+      })(t0);
+    });
+  },{threshold:.6});
+  counters.forEach(function(el){co.observe(el)});
+}
+
+/* ---------- case study ---------- */
+var STEPS=[
+ {t:"T − 48 hrs",n:"Abnormal login geography",b:"A login arrives from an IP in a different country or city than the account's 90-day history. The device fingerprint is new and the user agent matches a known credential-stuffing framework.",sg:[["New device fingerprint","Critical","login_events"],["Geo velocity anomaly","Critical","session_log"]]},
+ {t:"T − 24 hrs",n:"Account enumeration",b:"Many failed logins from one IP subnet across different accounts. This is classic credential stuffing, and eventually one attempt succeeds.",sg:[["Login velocity by IP and failed attempts","Layer 1 rule","login_events"]]},
+ {t:"T − 6 hrs",n:"Profile modification",b:"The password changes and the recovery email or phone is updated. That suppresses victim notifications and extends the attacker's window.",sg:[["Profile change close to a transaction","Critical","audit_log, transactions"]]},
+ {t:"T − 1 hr",n:"Recon transactions",b:"Small payments of ₹1 to ₹50 go to low-risk merchants. The attacker is checking that the account and its linked instruments are live and unblocked.",sg:[["Recon micro-payments","High","transactions"]]},
+ {t:"T = 0",n:"Cashout",b:"One large transaction to a newly registered payee, often in gift cards, crypto or money transfer, and usually just under the manual review threshold.",sg:[["New payee and high amount","Critical","payee_registry, transactions"],["High-risk MCC cashout","High","transactions, merchant_master"],["Velocity spike on a dormant account","High","transactions"]]},
+ {t:"T + 2 hrs",n:"Victim discovery",b:"The account holder logs in from their usual device, sees the payments and raises a dispute. By now the funds are often already moved.",sg:[]}
+];
+var TOTAL=STEPS.reduce(function(a,x){return a+x.sg.length},0);
+var cur=4,stepsEl=$("#steps"),detail=$("#detail");
+STEPS.forEach(function(x,i){
+  var li=document.createElement("li"),b=document.createElement("button");
+  b.type="button";b.className="step";b.setAttribute("aria-pressed","false");
+  b.innerHTML='<span class="t">'+x.t+'</span><span class="n">'+x.n+'</span>';
+  b.addEventListener("click",function(){cur=i;renderCase()});
+  li.appendChild(b);stepsEl.appendChild(li);
+});
+function sevClass(s){return s==="Critical"?"alert":(s==="High"?"warn":"acc")}
+function renderCase(){
+  $$(".step",stepsEl).forEach(function(b,i){b.setAttribute("aria-pressed",i===cur?"true":"false")});
+  var x=STEPS[cur],seen=0,i;
+  for(i=0;i<=cur;i++)seen+=STEPS[i].sg.length;
+  var h='<p class="when">'+x.t+'</p><h3>'+x.n+'</h3><p>'+x.b+'</p>';
+  if(x.sg.length){
+    h+='<ul class="sigs">';
+    x.sg.forEach(function(g){h+='<li><span>'+g[0]+'</span><span class="chip '+sevClass(g[1])+'">'+g[1]+'</span><span class="src">'+g[2]+'</span></li>'});
+    h+='</ul>';
+  }else{
+    h+='<ul class="sigs"><li><span class="none">No new signal. Detection had to happen earlier.</span></li></ul>';
+  }
+  h+='<div class="meter" aria-hidden="true">';
+  for(i=0;i<TOTAL;i++)h+='<i class="'+(i<seen?"on":"")+'"></i>';
+  h+='</div><p class="meter-l">'+seen+' of '+TOTAL+' signals seen so far</p>';
+  if(cur===4){
+    h+='<div class="verdict block"><b>RULE-ATO-002 hard-blocks this payment.</b> A password, email or phone change in the last 6 hours plus an amount above ₹5,000 is a near-certain takeover signal.<pre>IF profile_change_within(6h) AND amount_inr &gt; 5000\nTHEN action = \'HARD_BLOCK\', alert_team = \'RISK_OPS\'</pre></div>';
+  }else if(cur===5){
+    h+='<div class="verdict late"><b>Too late for a clean stop.</b> Once a mule forwards the funds, the chance of recovery drops below 20%. The analyst\'s job is to collapse this window from hours to minutes.</div>';
+  }else{
+    h+='<div class="verdict">Not enough evidence to block yet. Each signal adds to the account\'s risk score.</div>';
+  }
+  detail.innerHTML=h;
+}
+renderCase();
+
+/* ---------- lineage map ---------- */
+var LAYERS=[["SOURCE","Source systems"],["INGEST","Ingestion"],["TRANSFORM","Transform"],["AGGREGATE","Aggregation"],["REPORT","Reporting"],["DETECT","Anomaly and alerts"]];
+var NODES=[
+ {id:"s1",l:0,t:["Transaction","tables"],d:"Raw payment transactions. Part of the 12 source tables that feed the pipeline."},
+ {id:"s2",l:0,t:["Event and","status tables"],d:"Event and status records that explain what happened to each transaction. Part of the 12 source tables."},
+ {id:"s3",l:0,t:["Reference","tables"],d:"Reference data that gives each metric its dimensions. Part of the 12 source tables."},
+ {id:"i1",l:1,t:["Scheduled loads","Apache Airflow"],d:"Airflow schedules the loads that consolidate 10+ source systems."},
+ {id:"t1",l:2,t:["Stored procedures","PostgreSQL,","TimescaleDB"],d:"Stored procedures aggregate source tables and validate accuracy across 50K+ daily transactions."},
+ {id:"t2",l:2,t:["Source-to-target","mappings"],d:"Mapping documents record how each field flows into reporting, across 300+ dimensions."},
+ {id:"a1",l:3,t:["Hourly","rollups"],d:"Hourly rollups for near real-time views of payment health."},
+ {id:"a2",l:3,t:["Daily","rollups"],d:"Daily rollups for operational reporting and trend checks."},
+ {id:"a3",l:3,t:["Weekly","rollups"],d:"Weekly rollups for longer-range reporting."},
+ {id:"r1",l:4,t:["Metadata-driven","Grafana","dashboards"],d:"Dashboards driven by metadata, so a new client is a mapping change instead of a rebuild. This cut client-specific development time by 80%."},
+ {id:"d1",l:5,t:["Anomaly","detection","(SQL)"],d:"SQL-native detection over 300+ metrics. STL decomposition and outlier masking separate real risk signals from expected variation."}
+];
+var EDGES=[["s1","i1"],["s2","i1"],["s3","i1"],["i1","t1"],["i1","t2"],["t1","a1"],["t1","a2"],["t1","a3"],["t2","a1"],["t2","a2"],["t2","a3"],["a1","r1"],["a2","r1"],["a3","r1"],["a1","d1"],["a2","d1"]];
+var NW=132,NH=58,STEPX=156,X0=6,CY=186,GAP=78,NS="http://www.w3.org/2000/svg";
+var svg=$("#map"),byId={},counts={};
+NODES.forEach(function(n){counts[n.l]=(counts[n.l]||0)+1});
+var idx={};
+NODES.forEach(function(n){
+  idx[n.l]=(idx[n.l]||0);
+  var c=counts[n.l];
+  n.x=X0+n.l*STEPX;n.cy=CY+(idx[n.l]-(c-1)/2)*GAP;idx[n.l]++;
+  byId[n.id]=n;
+});
+function el(name,attrs,parent){var e=document.createElementNS(NS,name);for(var a in attrs)e.setAttribute(a,attrs[a]);if(parent)parent.appendChild(e);return e}
+LAYERS.forEach(function(l,i){var tx=el("text",{x:X0+i*STEPX+NW/2,y:22,"class":"lbl"},svg);tx.textContent=l[0]});
+var edgeEls=EDGES.map(function(e){
+  var a=byId[e[0]],b=byId[e[1]],x1=a.x+NW,y1=a.cy,x2=b.x,y2=b.cy,mx=(x1+x2)/2;
+  return {a:e[0],b:e[1],p:el("path",{d:"M"+x1+" "+y1+" C"+mx+" "+y1+" "+mx+" "+y2+" "+x2+" "+y2,"class":"edge"},svg)};
+});
+var nodeEls={};
+NODES.forEach(function(n){
+  var g=el("g",{"class":"node",tabindex:"0",role:"button","aria-label":n.t.join(" ")},svg);
+  el("rect",{x:n.x,y:n.cy-NH/2,width:NW,height:NH},g);
+  var y0=n.cy-(n.t.length-1)*6.5+4;
+  n.t.forEach(function(line,i){var tx=el("text",{x:n.x+NW/2,y:y0+i*13},g);tx.textContent=line});
+  g.addEventListener("click",function(){selectNode(n.id)});
+  g.addEventListener("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();selectNode(n.id)}});
+  nodeEls[n.id]=g;
+});
+function reach(start,dir){
+  var seen={},q=[start];seen[start]=1;
+  while(q.length){
+    var c=q.pop();
+    EDGES.forEach(function(e){
+      var from=dir==="up"?e[1]:e[0],to=dir==="up"?e[0]:e[1];
+      if(from===c&&!seen[to]){seen[to]=1;q.push(to)}
+    });
+  }
+  return seen;
+}
+function selectNode(id){
+  var up=reach(id,"up"),down=reach(id,"down"),rel={};
+  for(var a in up)rel[a]=1;for(var b in down)rel[b]=1;
+  NODES.forEach(function(n){
+    var g=nodeEls[n.id];
+    g.setAttribute("class","node"+(n.id===id?" sel":(rel[n.id]?" rel":" dim")));
+    g.setAttribute("aria-pressed",n.id===id?"true":"false");
+  });
+  edgeEls.forEach(function(e){
+    var on=rel[e.a]&&rel[e.b]&&((up[e.a]&&up[e.b])||(down[e.a]&&down[e.b]));
+    e.p.setAttribute("class","edge "+(on?"on":"dim"));
+  });
+  var n=byId[id];
+  $("#mapdetail").innerHTML='<div><p class="eyebrow">-- '+LAYERS[n.l][1].toLowerCase()+'</p><h3>'+n.t.join(" ")+'</h3></div><p>'+n.d+'</p>';
+}
+selectNode("d1");
+
+/* ---------- copy buttons ---------- */
+$$("[data-copy]").forEach(function(b){
+  b.addEventListener("click",function(){
+    var src=document.getElementById(b.dataset.copy),text=src.textContent.trim();
+    function done(){var o=b.textContent;b.textContent="Copied";setTimeout(function(){b.textContent=o},1600)}
+    function fallback(){
+      var r=document.createRange();r.selectNodeContents(src);var sel=getSelection();sel.removeAllRanges();sel.addRange(r);
+      b.textContent="Selected";setTimeout(function(){b.textContent="Copy"},1600);
+    }
+    try{navigator.clipboard.writeText(text).then(done,fallback)}catch(e){fallback()}
+  });
+});
+
+/* ---------- active nav ---------- */
+var links=$$("#nav a");
+if("IntersectionObserver" in window){
+  var so=new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(!en.isIntersecting)return;
+      var id=en.target.id;
+      links.forEach(function(a){a.classList.toggle("on",a.getAttribute("href")==="#"+id)});
+    });
+  },{rootMargin:"-40% 0px -55% 0px"});
+  ["skills","experience","impact","case","lineage","writing","contact"].forEach(function(id){var s=document.getElementById(id);if(s)so.observe(s)});
+}
+})();
+</script>
+
+</body></html>
     --surface: #0d1420;
     --card: #111827;
     --border: #1e2d45;
